@@ -273,6 +273,25 @@ body {
   transform: translateY(-50%) scale(1.1);
 }
 
+/* Custom Scrollbar for Online Services */
+.online-services-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.online-services-scroll::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+}
+
+.online-services-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+}
+
+.online-services-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.5);
+}
+
 /* Service Categories */
 .service-categories {
   padding: 80px 20px;

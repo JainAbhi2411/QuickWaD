@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Header from './components/Header';
@@ -6,7 +5,6 @@ import Hero from './components/Hero';
 import ServiceCategories from './components/ServiceCategories';
 import ServiceDetails from './components/ServiceDetails';
 import BookingFlow from './components/BookingFlow';
-import Footer from './components/Footer';
 import ProfilePage from './components/ProfilePage';
 import OrderHistory from './components/OrderHistory';
 import SearchResults from './components/SearchResults';
@@ -14,9 +12,11 @@ import CartPage from './components/CartPage';
 import ServiceTracking from './components/ServiceTracking';
 import Reviews from './components/Reviews';
 import PremiumFeatures from './components/PremiumFeatures';
+import OnlineServices from './components/OnlineServices';
 import HowItWorks from './components/HowItWorks';
 import ClientReviews from './components/ClientReviews';
 import TrustedSection from './components/TrustedSection';
+import Footer from './components/Footer';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -111,11 +111,25 @@ export default function App() {
   };
 
   const renderPage = () => {
+    const handleServiceSelect = (service) => {
+      setSelectedService(service);
+      setCurrentPage('service-details');
+    };
+
+    const handleSearch = (query) => {
+      setSearchQuery(query);
+      setCurrentPage('search');
+    };
+
     switch (currentPage) {
       case 'home':
         return (
           <>
             <Hero onSearch={setSearchQuery} />
+            <OnlineServices onServiceSelect={(service) => {
+              setSelectedService(service);
+              setCurrentPage('service-details');
+            }} />
             <ServiceCategories 
               onServiceSelect={(service) => {
                 setSelectedService(service);
@@ -207,6 +221,10 @@ export default function App() {
         return (
           <>
             <Hero onSearch={setSearchQuery} />
+            <OnlineServices onServiceSelect={(service) => {
+              setSelectedService(service);
+              setCurrentPage('service-details');
+            }} />
             <ServiceCategories 
               onServiceSelect={(service) => {
                 setSelectedService(service);
