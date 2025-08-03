@@ -223,6 +223,17 @@ export default function App() {
             }}
           />
         );
+      case "explore-all":
+        return (
+          <ExploreAllServices
+            categoryId={exploreCategory?.id}
+            onServiceSelect={(service) => {
+              setSelectedService(service);
+              setCurrentPage("service-details");
+            }}
+            onBackToHome={() => setCurrentPage("home")}
+          />
+        );
       default:
         return (
           <>
