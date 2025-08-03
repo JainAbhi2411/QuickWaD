@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const serviceCategories = [
   {
@@ -90,6 +90,23 @@ const serviceCategories = [
 
 export default function ServiceCategories({ onServiceSelect }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const scrollContainerRef = useRef(null);
+
+  const scroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const cardWidth = 320; // Width of each card + gap
+    const scrollAmount = cardWidth * 1.5;
+    const newScrollLeft = direction === 'left' 
+      ? Math.max(0, container.scrollLeft - scrollAmount)
+      : Math.min(container.scrollWidth - container.clientWidth, container.scrollLeft + scrollAmount);
+    
+    container.scrollTo({
+      left: newScrollLeft,
+      behavior: 'smooth'
+    });
+  };
 
   if (selectedCategory) {
     return (
@@ -138,19 +155,136 @@ export default function ServiceCategories({ onServiceSelect }) {
         <h2 className="section-title">Our Services</h2>
         <p className="section-subtitle">Choose from our wide range of professional services</p>
         
-        <div className="categories-grid">
-          {serviceCategories.map(category => (
-            <div 
-              key={category.id} 
-              className="category-card"
-              onClick={() => setSelectedCategory(category)}
-            >
-              <div className="category-icon">{category.icon}</div>
-              <h3>{category.name}</h3>
-              <p>{category.description}</p>
-              <div className="services-count">{category.serviceCount} services available</div>
-            </div>
-          ))}
+        {/* Categories with Arrow Navigation */}
+        <div style={{ position: 'relative' }}>
+          {/* Left Arrow */}
+          <button
+            onClick={() => scroll('left')}
+            style={{
+              position: 'absolute',
+              left: '-25px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255,255,255,0.95)',
+              border: '1px solid #e5e7eb',
+              borderRadius: '50%',
+              width: '50px',
+              height: '50px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              opacity: 0.9,
+              transition: 'all 0.3s ease',
+              zIndex: 10,
+              boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+              fontSize: '18px',
+              color: '#1f2937'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.opacity = '0.9';
+              e.target.style.transform = 'translateY(-50%) scale(1)';
+            }}
+          >
+            ←
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={() => scroll('right')}
+            style={{
+              position: 'absolute',
+              right: '-25px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255,255,255,0.95)',
+              border: '1px solid #e5e7eb',
+              borderRadius: '50%',
+              width: '50px',
+              height: '50px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              opacity: 0.9,
+              transition: 'all 0.3s ease',
+              zIndex: 10,
+              boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+              fontSize: '18px',
+              color: '#1f2937'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.opacity = '0.9';
+              e.target.style.transform = 'translateY(-50%) scale(1)';
+            }}
+          >
+            →
+          </button>
+
+          {/* Scrollable Categories Container */}
+          <div 
+            ref={scrollContainerRef}
+            style={{
+              display: 'flex',
+              gap: '25px',
+              overflowX: 'hidden',
+              scrollBehavior: 'smooth',
+              paddingBottom: '20px',
+              maskImage: 'linear-gradient(to right, transparent, white 40px, white calc(100% - 40px), transparent)'
+            }}
+          >
+            {serviceCategories.map(category => (
+              <div 
+                key={category.id} 
+                className="category-card"
+                onClick={() => setSelectedCategory(category)}
+                style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  padding: '30px',
+                  minWidth: '280px',
+                  flexShrink: 0,
+                  cursor: 'pointer',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)',
+                  transform: 'translateY(0) scale(1)',
+                  border: '1px solid #f1f5f9',
+                  textAlign: 'center'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
+                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.1)';
+                }}
+              >
+                <div style={{ fontSize: '48px', marginBottom: '15px' }}>{category.icon}</div>
+                <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '10px', color: '#1f2937' }}>{category.name}</h3>
+                <p style={{ color: '#6b7280', fontSize: '14px', lineHeight: '1.5', marginBottom: '15px' }}>{category.description}</p>
+                <div style={{ 
+                  background: '#f3f4f6', 
+                  color: '#374151', 
+                  padding: '6px 12px', 
+                  borderRadius: '20px', 
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  display: 'inline-block'
+                }}>
+                  {category.serviceCount} services available
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const premiumServices = [
   {
@@ -132,6 +132,23 @@ const premiumServices = [
 export default function PremiumFeatures({ onServiceSelect }) {
   const [selectedService, setSelectedService] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const scrollContainerRef = useRef(null);
+
+  const scroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const cardWidth = 380; // Width of each card + gap
+    const scrollAmount = cardWidth * 1.5;
+    const newScrollLeft = direction === 'left' 
+      ? Math.max(0, container.scrollLeft - scrollAmount)
+      : Math.min(container.scrollWidth - container.clientWidth, container.scrollLeft + scrollAmount);
+    
+    container.scrollTo({
+      left: newScrollLeft,
+      behavior: 'smooth'
+    });
+  };
 
   if (selectedService) {
     return (
@@ -395,13 +412,93 @@ export default function PremiumFeatures({ onServiceSelect }) {
           </p>
         </div>
 
-        {/* Premium Services Grid */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
-          gap: '30px' 
-        }}>
-          {premiumServices.map(service => (
+        {/* Premium Services with Arrow Navigation */}
+        <div style={{ position: 'relative' }}>
+          {/* Left Arrow */}
+          <button
+            onClick={() => scroll('left')}
+            style={{
+              position: 'absolute',
+              left: '-25px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255,255,255,0.95)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '55px',
+              height: '55px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              opacity: 0.9,
+              transition: 'all 0.3s ease',
+              zIndex: 10,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+              fontSize: '20px',
+              color: '#1f2937'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.opacity = '0.9';
+              e.target.style.transform = 'translateY(-50%) scale(1)';
+            }}
+          >
+            ←
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={() => scroll('right')}
+            style={{
+              position: 'absolute',
+              right: '-25px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255,255,255,0.95)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '55px',
+              height: '55px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              opacity: 0.9,
+              transition: 'all 0.3s ease',
+              zIndex: 10,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+              fontSize: '20px',
+              color: '#1f2937'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.opacity = '0.9';
+              e.target.style.transform = 'translateY(-50%) scale(1)';
+            }}
+          >
+            →
+          </button>
+
+          {/* Scrollable Services Container */}
+          <div 
+            ref={scrollContainerRef}
+            style={{
+              display: 'flex',
+              gap: '30px',
+              overflowX: 'hidden',
+              scrollBehavior: 'smooth',
+              paddingBottom: '20px',
+              maskImage: 'linear-gradient(to right, transparent, white 50px, white calc(100% - 50px), transparent)'
+            }}
+          >
+            {premiumServices.map(service => (
             <div 
               key={service.id}
               onClick={() => setSelectedService(service)}
@@ -409,21 +506,21 @@ export default function PremiumFeatures({ onServiceSelect }) {
                 background: 'white',
                 borderRadius: '20px',
                 padding: '30px',
+                minWidth: '350px',
+                flexShrink: 0,
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-                transform: 'translateY(0)',
-                ':hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
-                }
+                transform: 'translateY(0) scale(1)',
+                position: 'relative',
+                overflow: 'hidden'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.3)';
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.3)';
               }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
                 e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.2)';
               }}
             >
@@ -506,6 +603,7 @@ export default function PremiumFeatures({ onServiceSelect }) {
               </button>
             </div>
           ))}
+          </div>
         </div>
 
         {/* Bottom CTA */}
