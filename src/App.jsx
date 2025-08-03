@@ -10,6 +10,9 @@ import Footer from './components/Footer';
 import ProfilePage from './components/ProfilePage';
 import OrderHistory from './components/OrderHistory';
 import SearchResults from './components/SearchResults';
+import CartPage from './components/CartPage';
+import ServiceTracking from './components/ServiceTracking';
+import Reviews from './components/Reviews';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -19,6 +22,22 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState([]);
   const [bookingStep, setBookingStep] = useState(1);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: 'Service Reminder',
+      message: 'Your house cleaning is scheduled for tomorrow at 2 PM',
+      time: '2 hours ago',
+      read: false
+    },
+    {
+      id: 2,
+      title: 'Booking Confirmed',
+      message: 'Your plumbing repair service has been confirmed',
+      time: '1 day ago',
+      read: false
+    }
+  ]);
 
   useEffect(() => {
     // Simulate user login check
@@ -27,7 +46,18 @@ export default function App() {
       setUser(JSON.parse(savedUser));
       setIsLoggedIn(true);
     }
+
+    // Load cart from localStorage
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
   }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -44,10 +74,36 @@ export default function App() {
 
   const addToCart = (service) => {
     setCart([...cart, { ...service, id: Date.now() }]);
+    // Add success notification
+    setNotifications(prev => [...prev, {
+      id: Date.now(),
+      title: 'Added to Cart',
+      message: `${service.name} has been added to your cart`,
+      time: 'Just now',
+      read: false
+    }]);
   };
 
-  const removeFromCart = (id) => {
-    setCart(cart.filter(item => item.id !== id));
+  const removeFromCart = (index) => {
+    setCart(cart.filter((_, i) => i !== index));
+  };
+
+  const updateCart = (index, quantity) => {
+    const updatedCart = [...cart];
+    updatedCart[index] = { ...updatedCart[index], quantity };
+    setCart(updatedCart);
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const handleProceedToCheckout = () => {
+    if (cart.length > 0) {
+      setSelectedService(cart[0]); // Use first item as primary service
+      setCurrentPage('booking');
+      setBookingStep(1);
+    }
   };
 
   const renderPage = () => {
@@ -101,6 +157,30 @@ export default function App() {
             }}
           />
         );
+      case 'cart':
+        return (
+          <CartPage
+            cart={cart}
+            onUpdateCart={updateCart}
+            onRemoveFromCart={removeFromCart}
+            onClearCart={clearCart}
+            onProceedToCheckout={handleProceedToCheckout}
+          />
+        );
+      case 'tracking':
+        return (
+          <ServiceTracking
+            bookingId="SP001"
+            onClose={() => setCurrentPage('orders')}
+          />
+        );
+      case 'reviews':
+        return (
+          <Reviews
+            serviceId={selectedService?.id}
+            onClose={() => setCurrentPage('service-details')}
+          />
+        );
       default:
         return (
           <>
@@ -125,6 +205,7 @@ export default function App() {
         onLogout={handleLogout}
         onPageChange={setCurrentPage}
         cart={cart}
+        notifications={notifications}
         onSearch={(query) => {
           setSearchQuery(query);
           setCurrentPage('search');
