@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function Header({ 
-  isLoggedIn, 
-  user, 
-  onLogin, 
-  onLogout, 
-  onPageChange, 
-  cart, 
-  onSearch,
-  notifications = []
-}) {
+export default function Header({ isLoggedIn, user, onLogin, onLogout, cart, notifications, onSearch }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -21,6 +13,7 @@ export default function Header({
     phone: '' 
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -61,10 +54,10 @@ export default function Header({
     <>
       <header className="header">
         <div className="header-container">
-          <a href="#" className="logo" onClick={() => onPageChange('home')}>
+          <Link to="/" className="logo" style={{ textDecoration: 'none' }}>
             <span style={{ fontSize: '24px', fontWeight: '700', color: '#6366f1' }}>🏠</span>
             ServicePro
-          </a>
+          </Link>
 
           <div className="search-bar">
             <form onSubmit={handleSearch}>
@@ -86,7 +79,7 @@ export default function Header({
               <>
                 <button 
                   className="nav-link"
-                  onClick={() => onPageChange('orders')}
+                  onClick={() => navigate('/orders')}
                 >
                   My Orders
                 </button>
@@ -162,7 +155,7 @@ export default function Header({
                 {/* Cart */}
                 <button 
                   className="cart-icon" 
-                  onClick={() => onPageChange('cart')}
+                  onClick={() => navigate('/cart')}
                   style={{ position: 'relative' }}
                 >
                   🛒
@@ -171,15 +164,27 @@ export default function Header({
                   )}
                 </button>
 
-                <button 
-                  className="nav-link"
-                  onClick={() => onPageChange('profile')}
-                >
-                  👤 {user?.name || 'Profile'}
-                </button>
-                <button className="nav-link" onClick={onLogout}>
-                  Logout
-                </button>
+                {/* Profile Dropdown */}
+                <div className="dropdown">
+                  <button className="dropbtn">👤 {user?.name || 'Profile'}</button>
+                  <div className="dropdown-content">
+                    <button 
+                      className="dropdown-item"
+                      onClick={() => navigate('/profile')}
+                    >
+                      👤 Profile
+                    </button>
+                    <button 
+                      className="dropdown-item"
+                      onClick={() => navigate('/orders')}
+                    >
+                      📋 My Orders
+                    </button>
+                    <button className="dropdown-item" onClick={onLogout}>
+                      Logout
+                    </button>
+                  </div>
+                </div>
               </>
             ) : (
               <>

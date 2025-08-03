@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -19,8 +21,43 @@ import TrustedSection from "./components/TrustedSection";
 import Footer from "./components/Footer";
 import ExploreAllServices from "./components/ExploreAllServices";
 
+// Home Page Component
+function HomePage({ selectedService, setSelectedService, exploreCategory, setExploreCategory }) {
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <Hero onSearch={(query) => navigate(`/search?q=${query}`)} />
+      <OnlineServices
+        onServiceSelect={(service) => {
+          setSelectedService(service);
+          navigate("/service-details");
+        }}
+      />
+      <ServiceCategories
+        onServiceSelect={(service) => {
+          setSelectedService(service);
+          navigate("/service-details");
+        }}
+        onExploreAll={(category) => {
+          setExploreCategory(category);
+          navigate("/explore-all");
+        }}
+      />
+      <HowItWorks />
+      <PremiumFeatures
+        onServiceSelect={(service) => {
+          setSelectedService(service);
+          navigate("/service-details");
+        }}
+      />
+      <ClientReviews />
+      <TrustedSection />
+    </>
+  );
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState("home");
   const [selectedService, setSelectedService] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -75,7 +112,6 @@ export default function App() {
     setUser(null);
     setIsLoggedIn(false);
     localStorage.removeItem("user");
-    setCurrentPage("home");
   };
 
   const addToCart = (service) => {
@@ -110,172 +146,140 @@ export default function App() {
   const handleProceedToCheckout = () => {
     if (cart.length > 0) {
       setSelectedService(cart[0]); // Use first item as primary service
-      setCurrentPage("booking");
       setBookingStep(1);
     }
   };
 
-  const renderPage = () => {
-    const handleServiceSelect = (service) => {
-      setSelectedService(service);
-      setCurrentPage("service-details");
-    };
-
-    const handleSearch = (query) => {
-      setSearchQuery(query);
-      setCurrentPage("search");
-    };
-
-    switch (currentPage) {
-      case "home":
-        return (
-          <>
-            <Hero onSearch={setSearchQuery} />
-            <OnlineServices
-              onServiceSelect={(service) => {
-                setSelectedService(service);
-                setCurrentPage("service-details");
-              }}
-            />
-            <ServiceCategories
-              onServiceSelect={(service) => {
-                setSelectedService(service);
-                setCurrentPage("service-details");
-              }}
-              onExploreAll={(category) => {
-                setExploreCategory(category);
-                setCurrentPage("explore-all");
-              }}
-            />
-            <HowItWorks />
-            <PremiumFeatures
-              onServiceSelect={(service) => {
-                setSelectedService(service);
-                setCurrentPage("service-details");
-              }}
-            />
-            <ClientReviews />
-            <TrustedSection />
-          </>
-        );
-      case "service-details":
-        return (
-          <ServiceDetails
-            service={selectedService}
-            onBookNow={() => setCurrentPage("booking")}
-            onAddToCart={addToCart}
-          />
-        );
-      case "booking":
-        return (
-          <BookingFlow
-            service={selectedService}
-            cart={cart}
-            currentStep={bookingStep}
-            onStepChange={setBookingStep}
-            user={user}
-          />
-        );
-      case "profile":
-        return <ProfilePage user={user} onUpdateUser={setUser} />;
-      case "orders":
-        return <OrderHistory user={user} />;
-      case "search":
-        return (
-          <SearchResults
-            query={searchQuery}
-            onServiceSelect={(service) => {
-              setSelectedService(service);
-              setCurrentPage("service-details");
-            }}
-          />
-        );
-      case "cart":
-        return (
-          <CartPage
-            cart={cart}
-            onUpdateCart={updateCart}
-            onRemoveFromCart={removeFromCart}
-            onClearCart={clearCart}
-            onProceedToCheckout={handleProceedToCheckout}
-          />
-        );
-      case "tracking":
-        return (
-          <ServiceTracking
-            bookingId="SP001"
-            onClose={() => setCurrentPage("orders")}
-          />
-        );
-      case "reviews":
-        return (
-          <Reviews
-            serviceId={selectedService?.id}
-            onClose={() => setCurrentPage("service-details")}
-          />
-        );
-      case "premium":
-        return (
-          <PremiumFeatures
-            onServiceSelect={(service) => {
-              setSelectedService(service);
-              setCurrentPage("service-details");
-            }}
-          />
-        );
-      case "explore-all":
-        return (
-          <ExploreAllServices
-            categoryId={exploreCategory?.id}
-            onServiceSelect={(service) => {
-              setSelectedService(service);
-              setCurrentPage("service-details");
-            }}
-            onBackToHome={() => setCurrentPage("home")}
-          />
-        );
-      default:
-        return (
-          <>
-            <Hero onSearch={setSearchQuery} />
-            <OnlineServices
-              onServiceSelect={(service) => {
-                setSelectedService(service);
-                setCurrentPage("service-details");
-              }}
-            />
-            <ServiceCategories
-              onServiceSelect={(service) => {
-                setSelectedService(service);
-                setCurrentPage("service-details");
-              }}
-              onExploreAll={(category) => {
-                setExploreCategory(category);
-                setCurrentPage("explore-all");
-              }}
-            />
-          </>
-        );
-    }
-  };
-
   return (
-    <div className="App">
-      <Header
-        isLoggedIn={isLoggedIn}
-        user={user}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-        onPageChange={setCurrentPage}
-        cart={cart}
-        notifications={notifications}
-        onSearch={(query) => {
-          setSearchQuery(query);
-          setCurrentPage("search");
-        }}
-      />
-      <main className="main-content">{renderPage()}</main>
-      <Footer />
-    </div>
+    <Router>
+      <div className="App">
+        <Header
+          isLoggedIn={isLoggedIn}
+          user={user}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+          cart={cart}
+          notifications={notifications}
+          onSearch={(query) => {
+            setSearchQuery(query);
+          }}
+        />
+        <main className="main-content">
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <HomePage 
+                  selectedService={selectedService}
+                  setSelectedService={setSelectedService}
+                  exploreCategory={exploreCategory}
+                  setExploreCategory={setExploreCategory}
+                />
+              } 
+            />
+            <Route 
+              path="/service-details" 
+              element={
+                <ServiceDetails
+                  service={selectedService}
+                  onBookNow={() => window.location.href = "/booking"}
+                  onAddToCart={addToCart}
+                />
+              } 
+            />
+            <Route 
+              path="/booking" 
+              element={
+                <BookingFlow
+                  service={selectedService}
+                  cart={cart}
+                  currentStep={bookingStep}
+                  onStepChange={setBookingStep}
+                  user={user}
+                />
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={<ProfilePage user={user} onUpdateUser={setUser} />} 
+            />
+            <Route 
+              path="/orders" 
+              element={<OrderHistory user={user} />} 
+            />
+            <Route 
+              path="/search" 
+              element={
+                <SearchResults
+                  query={searchQuery}
+                  onServiceSelect={(service) => {
+                    setSelectedService(service);
+                    window.location.href = "/service-details";
+                  }}
+                />
+              } 
+            />
+            <Route 
+              path="/cart" 
+              element={
+                <CartPage
+                  cart={cart}
+                  onUpdateCart={updateCart}
+                  onRemoveFromCart={removeFromCart}
+                  onClearCart={clearCart}
+                  onProceedToCheckout={() => {
+                    handleProceedToCheckout();
+                    window.location.href = "/booking";
+                  }}
+                />
+              } 
+            />
+            <Route 
+              path="/tracking" 
+              element={
+                <ServiceTracking
+                  bookingId="SP001"
+                  onClose={() => window.location.href = "/orders"}
+                />
+              } 
+            />
+            <Route 
+              path="/reviews" 
+              element={
+                <Reviews
+                  serviceId={selectedService?.id}
+                  onClose={() => window.location.href = "/service-details"}
+                />
+              } 
+            />
+            <Route 
+              path="/premium" 
+              element={
+                <PremiumFeatures
+                  onServiceSelect={(service) => {
+                    setSelectedService(service);
+                    window.location.href = "/service-details";
+                  }}
+                />
+              } 
+            />
+            <Route 
+              path="/explore-all" 
+              element={
+                <ExploreAllServices
+                  categoryId={exploreCategory?.id}
+                  onServiceSelect={(service) => {
+                    setSelectedService(service);
+                    window.location.href = "/service-details";
+                  }}
+                  onBackToHome={() => window.location.href = "/"}
+                />
+              } 
+            />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
