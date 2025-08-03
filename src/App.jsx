@@ -14,6 +14,9 @@ import CartPage from './components/CartPage';
 import ServiceTracking from './components/ServiceTracking';
 import Reviews from './components/Reviews';
 import PremiumFeatures from './components/PremiumFeatures';
+import HowItWorks from './components/HowItWorks';
+import ClientReviews from './components/ClientReviews';
+import TrustedSection from './components/TrustedSection';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -119,12 +122,15 @@ export default function App() {
                 setCurrentPage('service-details');
               }}
             />
+            <HowItWorks />
             <PremiumFeatures 
               onServiceSelect={(service) => {
                 setSelectedService(service);
                 setCurrentPage('service-details');
               }}
             />
+            <ClientReviews />
+            <TrustedSection />
           </>
         );
       case 'service-details':
