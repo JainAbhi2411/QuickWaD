@@ -42,6 +42,7 @@ export default function App() {
       read: false
     }
   ]);
+  const [exploreCategory, setExploreCategory] = useState(null);
 
   useEffect(() => {
     // Simulate user login check
@@ -134,6 +135,10 @@ export default function App() {
               onServiceSelect={(service) => {
                 setSelectedService(service);
                 setCurrentPage('service-details');
+              }}
+              onExploreAll={(category) => {
+                setExploreCategory(category);
+                setCurrentPage('explore-all');
               }}
             />
             <HowItWorks />
@@ -229,6 +234,10 @@ export default function App() {
               onServiceSelect={(service) => {
                 setSelectedService(service);
                 setCurrentPage('service-details');
+              }}
+              onExploreAll={(category) => {
+                setExploreCategory(category);
+                setCurrentPage('explore-all');
               }}
             />
           </>
