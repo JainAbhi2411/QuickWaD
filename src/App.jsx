@@ -13,6 +13,7 @@ import SearchResults from './components/SearchResults';
 import CartPage from './components/CartPage';
 import ServiceTracking from './components/ServiceTracking';
 import Reviews from './components/Reviews';
+import PremiumFeatures from './components/PremiumFeatures';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -118,6 +119,12 @@ export default function App() {
                 setCurrentPage('service-details');
               }}
             />
+            <PremiumFeatures 
+              onServiceSelect={(service) => {
+                setSelectedService(service);
+                setCurrentPage('service-details');
+              }}
+            />
           </>
         );
       case 'service-details':
@@ -179,6 +186,15 @@ export default function App() {
           <Reviews
             serviceId={selectedService?.id}
             onClose={() => setCurrentPage('service-details')}
+          />
+        );
+      case 'premium':
+        return (
+          <PremiumFeatures 
+            onServiceSelect={(service) => {
+              setSelectedService(service);
+              setCurrentPage('service-details');
+            }}
           />
         );
       default:

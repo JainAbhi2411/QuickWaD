@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 export default function Header({ 
@@ -91,7 +90,7 @@ export default function Header({
                 >
                   My Orders
                 </button>
-                
+
                 {/* Notifications */}
                 <div style={{ position: 'relative' }}>
                   <button 
@@ -119,7 +118,7 @@ export default function Header({
                       </span>
                     )}
                   </button>
-                  
+
                   {showNotifications && (
                     <div style={{
                       position: 'absolute',
@@ -171,7 +170,7 @@ export default function Header({
                     <span className="cart-count">{cart.length}</span>
                   )}
                 </button>
-                
+
                 <button 
                   className="nav-link"
                   onClick={() => onPageChange('profile')}
