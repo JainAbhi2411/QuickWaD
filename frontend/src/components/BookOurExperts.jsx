@@ -15,7 +15,7 @@ export default function BookOurExperts() {
   useEffect(() => {
     const fetchExpertServices = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/expert-services`); // Adjust the API URL as per your backend
+        const response = await axios.get(`${apiUrl}/api/expert-services`, { withCredentials: true }); // Adjust the API URL as per your backend
         setExpertServices(response.data);
         setLoading(false);
       } catch (error) {

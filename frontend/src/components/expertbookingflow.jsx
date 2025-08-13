@@ -26,7 +26,7 @@ export default function ExpertBooking() {
   useEffect(() => {
     const fetchExpertData = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/expert-services/${id}`); // Adjust API endpoint accordingly
+        const response = await axios.get(`${apiUrl}/api/expert-services/${id}`, { withCredentials: true }); // Adjust API endpoint accordingly
         setExpert(response.data);
       } catch (error) {
         console.error('Error fetching expert data:', error);

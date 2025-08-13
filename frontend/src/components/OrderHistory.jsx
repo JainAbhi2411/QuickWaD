@@ -24,7 +24,7 @@ export default function OrderHistory() {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${apiUrl}/api/bookings/user/${user.id}`);
+        const response = await axios.get(`${apiUrl}/api/bookings/user/${user.id}`, { withCredentials: true });
         console.log(response.data.bookings);
         setOrders(response.data.bookings);
       } catch (err) {
@@ -52,7 +52,7 @@ export default function OrderHistory() {
 
   const handleOrderStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.patch(`${apiUrl}/api/bookings/update/${orderId}`, { status: newStatus });
+      await axios.patch(`${apiUrl}/api/bookings/update/${orderId}`, { status: newStatus }, { withCredentials: true });
       setOrders(orders.map(order => order._id === orderId ? { ...order, status: newStatus } : order));
     } catch (err) {
       alert('Failed to update the booking status');

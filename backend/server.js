@@ -22,7 +22,8 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser()); // Enable cookie parsing
 app.use(cors({
-  origin: 'https://quickwad.netlify.app' // Frontend URL (adjust if needed // Allow cookies to be sent
+  origin: 'https://quickwad.netlify.app', // Frontend URL (adjust if needed)
+  credentials: true, // Allow cookies to be sent
 }));
 
 // MongoDB Connection

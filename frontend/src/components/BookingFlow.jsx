@@ -47,13 +47,13 @@ export default function BookingFlow() {
       try {
         let matched = null;
         if (location.pathname.includes('/online-services/')) {
-          const response = await axios.get(`${apiUrl}/api/online-services/${id}`);
+          const response = await axios.get(`${apiUrl}/api/online-services/${id}`, { withCredentials: true });
           matched = response.data;
         } else if (location.pathname.includes('/premium-services/')) {
-          const response = await axios.get(`${apiUrl}/api/premium-services/${id}`);
+          const response = await axios.get(`${apiUrl}/api/premium-services/${id}`, { withCredentials: true });
           matched = response.data;
         } else if (location.pathname.includes('/service/')) {
-          const response = await axios.get(`${apiUrl}/api/service-categories/services/${id}`);
+          const response = await axios.get(`${apiUrl}/api/service-categories/services/${id}`, { withCredentials: true });
           matched = response.data;
         }
         setService(matched);
@@ -100,7 +100,7 @@ export default function BookingFlow() {
     };
 
     try {
-      const response = await axios.post(`${apiUrl}/api/bookings/create`, bookingData);
+      const response = await axios.post(`${apiUrl}/api/bookings/create`, bookingData, { withCredentials: true });
       const userConfirmed = window.confirm('Do you want to confirm the booking?');
 
       //console.log(response.data);
@@ -108,7 +108,7 @@ export default function BookingFlow() {
       if (userConfirmed) {
         // If the user confirms, fetch the booking details
         const bookingId = response.data.booking._id;
-        const confirmedResponse = await axios.get(`${apiUrl}/api/bookings/confirm/${bookingId}`);
+        const confirmedResponse = await axios.get(`${apiUrl}/api/bookings/confirm/${bookingId}`, { withCredentials: true });
         console.log(confirmedResponse.data);
         setConfirmedBooking(confirmedResponse.data.booking);
         setCurrentStep(4); // Move to the next step after confirmation

@@ -25,7 +25,7 @@ export default function ServiceCategoryDetail() {
     const fetchService = async () => {
       try {
         //console.log(`Request URL: ${apiUrl}/api/service-categories/services/${id}`);
-        const response = await axios.get(`${apiUrl}/api/service-categories/services/${id}`);
+        const response = await axios.get(`${apiUrl}/api/service-categories/services/${id}`, { withCredentials: true });
         //console.log("API Response:", response.data);
         
         if (response.data && response.data) {

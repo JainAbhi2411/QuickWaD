@@ -14,7 +14,7 @@ export default function ServiceTracking() {
   useEffect(() => {
     const fetchTrackingData = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/bookings/tracking/${bookingId}`);
+        const response = await axios.get(`${apiUrl}/api/bookings/tracking/${bookingId}`, { withCredentials: true });
         setTrackingData(response.data.trackingData);
       } catch (err) {
         setError('Failed to fetch tracking data');

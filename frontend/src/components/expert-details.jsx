@@ -15,7 +15,7 @@ export default function ExpertDetails() {
   useEffect(() => {
     const fetchExpert = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/expert-services/${id}`);
+        const response = await axios.get(`${apiUrl}/api/expert-services/${id}`, { withCredentials: true });
         setExpert(response.data); // Set the expert data from the API response
       } catch (error) {
         console.error('Error fetching expert data:', error);

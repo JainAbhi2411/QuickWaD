@@ -16,7 +16,7 @@ export default function PremiumServiceDetail() {
     const fetchServiceDetails = async () => {
       try {
         setLoading(true); // Start loading
-        const response = await axios.get(`${apiUrl}/api/premium-services/${id}`); // Fetch service details
+        const response = await axios.get(`${apiUrl}/api/premium-services/${id}`, { withCredentials: true }); // Fetch service details
         setService(response.data); // Set the service details
         setLoading(false); // End loading
       } catch (err) {

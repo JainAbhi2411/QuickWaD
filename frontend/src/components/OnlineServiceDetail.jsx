@@ -14,7 +14,7 @@ export default function OnlineServiceDetail() {
   useEffect(() => {
     const fetchOnlineService = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/online-services/${id}`);
+        const response = await axios.get(`${apiUrl}/api/online-services/${id}`, { withCredentials: true });
         setService(response.data); // Set the expert data from the API response
       } catch (error) {
         console.error('Error fetching expert data:', error);

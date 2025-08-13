@@ -22,7 +22,7 @@ export default function ExploreOnlineServices() {
   useEffect(() => {
     const fetchOnlineServices = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/online-services`); // Fetch data from backend
+        const response = await axios.get(`${apiUrl}/api/online-services`, { withCredentials: true }); // Fetch data from backend
         setOnlineServices(response.data); // Set the data to state
       } catch (err) {
         console.error('Error fetching online services:', err);

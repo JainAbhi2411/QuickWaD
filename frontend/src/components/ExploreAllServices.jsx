@@ -16,7 +16,7 @@ export default function ExploreAllServices() {
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/service-categories/category/${categoryId}/services`);
+        const response = await axios.get(`${apiUrl}/api/service-categories/category/${categoryId}/services`, { withCredentials: true });
         //console.log("response" , response); // Replace with your API endpoint
         setCategory(response.data);
         setLoading(false);

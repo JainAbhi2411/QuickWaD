@@ -26,7 +26,7 @@ export default function SearchResults() {
     const fetchServices = async () => {
       try {
         // Make an API request to the backend to fetch search results
-        const response = await axios.get(`${apiUrl}/api/services/search?q=${query}`);
+        const response = await axios.get(`${apiUrl}/api/services/search?q=${query}`, { withCredentials: true });
         setResults(response.data.services); // Save the results from backend into state
       } catch (err) {
         console.error('Error fetching services:', err);

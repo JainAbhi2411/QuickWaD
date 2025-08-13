@@ -13,7 +13,7 @@ export default function PremiumFeatures() {
     const fetchPremiumServices = async () => {
       try {
         // Make an API request to your backend to fetch premium services
-        const response = await axios.get(`${apiUrl}/api/premium-services`);
+        const response = await axios.get(`${apiUrl}/api/premium-services`, { withCredentials: true });
         setPremiumServices(response.data); // Set the data to state
       } catch (error) {
         console.error('Error fetching premium services', error);

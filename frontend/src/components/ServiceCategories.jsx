@@ -15,7 +15,7 @@ export default function ServiceCategories() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/service-categories/`);
+        const response = await axios.get(`${apiUrl}/api/service-categories/`, { withCredentials: true });
         //console.log("response" , response); // Replace with your API
         setCategories(response.data);
         setLoading(false);
