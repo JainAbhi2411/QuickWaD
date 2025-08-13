@@ -100,7 +100,7 @@ export default function BookingFlow() {
     };
 
     try {
-      const response = await axios.post('${apiUrl}/api/bookings/create', bookingData);
+      const response = await axios.post(`${apiUrl}/api/bookings/create`, bookingData);
       const userConfirmed = window.confirm('Do you want to confirm the booking?');
 
       //console.log(response.data);

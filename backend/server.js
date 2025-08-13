@@ -22,7 +22,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser()); // Enable cookie parsing
 app.use(cors({
-  origin: 'http://localhost:5173', // Frontend URL (adjust if needed)
+  origin: 'https://quickwad.netlify.app', // Frontend URL (adjust if needed)
   credentials: true, // Allow cookies to be sent
 }));
 
