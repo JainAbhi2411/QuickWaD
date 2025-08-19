@@ -11,6 +11,7 @@ export default function BookingFlow() {
   const [service, setService] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);  
   const [user, setUser] = useState(null);
+  const [upiQR, setUpiQR] = useState(null);
   const [bookingDetails, setBookingDetails] = useState({
     date: '',
     time: '',
@@ -129,6 +130,13 @@ export default function BookingFlow() {
       </div>
     );
   }
+
+  const generateQR = (method) => {
+  // Call an API to generate the QR code based on the selected UPI method
+  // For demonstration, we'll use a static example
+  const qrURL = `https://example.com/upi-qr/${method}`;
+  setUpiQR(qrURL);  // Store QR URL in state (upiQR)
+};
 
   return (
     <section style={{ padding: '40px 20px', background: '#f8fafc', minHeight: '80vh' }}>
@@ -327,7 +335,7 @@ export default function BookingFlow() {
               <div style={{ marginBottom: '25px' }}>
                 <label style={{ display: 'block', marginBottom: '15px', fontWeight: '500' }}>Payment Method</label>
                 <div style={{ display: 'flex', gap: '15px' }}>
-                  {['card', 'upi', 'wallet'].map(method => (
+                  {['card', 'upi', 'cas'].map(method => (
                     <button
                       key={method}
                       onClick={() => setBookingDetails({ ...bookingDetails, paymentMethod: method })}
@@ -341,7 +349,7 @@ export default function BookingFlow() {
                         fontWeight: '500'
                       }}
                     >
-                      {method === 'card' ? '💳 Card' : method === 'upi' ? '📱 UPI' : '💰 Wallet'}
+                      {method === 'card' ? '💳 Card' : method === 'upi' ? '📱 UPI' : '💸 CAS (Pay Later)'}
                     </button>
                   ))}
                 </div>
@@ -382,8 +390,44 @@ export default function BookingFlow() {
                   />
                 </div>
               )}
+
+              {/* UPI Payment */}
+              {bookingDetails.paymentMethod === 'upi' && (
+                <div>
+                  <h4>Select UPI Method</h4>
+                  <div style={{ display: 'flex', gap: '15px' }}>
+                    {['phonepay', 'paytm', 'googlepay'].map(upimethod => (
+                      <button
+                        key={upimethod}
+                        onClick={() => generateQR(upimethod)}
+                        style={{
+                          padding: '15px 20px',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: '500'
+                        }}
+                      >
+                        {upimethod === 'phonepay' ? '📱 PhonePe' : upimethod === 'paytm' ? '📲 Paytm' : '💳 Google Pay'}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Show QR for UPI */}
+                  {upiQR && <img src={upiQR} alt="UPI QR" style={{ marginTop: '20px', width: '100px', height: '100px' }} />}
+                </div>
+              )}
+
+              {/* CAS (Cash After Service) */}
+              {bookingDetails.paymentMethod === 'cas' && (
+                <div>
+                  <h4>Pay After Service</h4>
+                  <p>You can pay for the service after it is completed.</p>
+                </div>
+              )}
             </div>
           )}
+
 
           {/* STEP 4 - CONFIRMATION */}
           {currentStep === 4 && (
