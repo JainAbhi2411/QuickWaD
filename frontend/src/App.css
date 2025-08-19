@@ -1001,3 +1001,166 @@ body {
   font-weight: 600;
   display: inline-block;
 }
+.payment-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.payment-header {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.order-summary {
+  background-color: #f9fafb;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.order-summary-header {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.summary-total {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.payment-methods {
+  margin-bottom: 25px;
+}
+
+.payment-method-label {
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.payment-method-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.payment-method-button {
+  padding: 15px 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  text-transform: capitalize;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.payment-method-button.selected {
+  border: 2px solid #6366f1;
+  background-color: #f8faff;
+}
+
+.card-details {
+  display: grid;
+  gap: 15px;
+}
+
+.card-input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+.card-inputs-row {
+  display: flex;
+  gap: 15px;
+}
+
+.upi-selection {
+  margin-top: 25px;
+}
+
+.upi-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.upi-methods {
+  display: flex;
+  gap: 15px;
+}
+
+.upi-method-button {
+  padding: 15px 20px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.upi-id-input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  font-size: 16px;
+  width: 100%;
+}
+
+.upi-submit-btn {
+  padding: 12px 20px;
+  background-color: #6366f1;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.upi-submit-btn:hover {
+  background-color: #4f50e0;
+}
+
+.upi-qr {
+  margin-top: 20px;
+  max-width: 200px;
+  max-height: 200px;
+}
+
+.cas-confirmation {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.confirm-cas {
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: #6366f1;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.confirm-cas:hover {
+  background-color: #4f50e0;
+}
