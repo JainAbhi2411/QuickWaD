@@ -11,7 +11,6 @@ export default function BookingFlow() {
   const [service, setService] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);  
   const [user, setUser] = useState(null);
-  const [upiQR, setUpiQR] = useState(null);
   const [bookingDetails, setBookingDetails] = useState({
     date: '',
     time: '',
@@ -130,33 +129,6 @@ export default function BookingFlow() {
       </div>
     );
   }
-
- const handleUPIDeepLink = (method) => {
-  // Example UPI deep link for Paytm, PhonePe, etc.
-  const upiLink = `upi://pay?pa=${method}@upi&pn=ExamplePay&mc=1234&tid=0000001&txn=100&url=https://www.example.com`;
-  
-  // Open the UPI app
-  window.location.href = upiLink;
-};
-
-// Function to Handle UPI Payment (manual entry)
-const handleUPIPayment = () => {
-  if (!paymentDetails.upiId) {
-    alert('Please enter your UPI ID');
-    return;
-  }
-
-  // In a real app, send the UPI ID to the backend for validation and payment processing
-  alert(`Proceeding to pay via UPI ID: ${paymentDetails.upiId}`);
-};
-
-{/* Generate UPI QR */}
-const generateUPIQR = (upiId, amount) => {
-  // Normally, use an API like Razorpay to generate a UPI QR code with amount and UPI ID
-  const qrURL = `https://www.example.com/upi-qr/${upiId}/${amount}`;
-  setUpiQR(qrURL);
-};
-
 
   return (
     <section style={{ padding: '40px 20px', background: '#f8fafc', minHeight: '80vh' }}>
@@ -322,120 +294,97 @@ const generateUPIQR = (upiId, amount) => {
           )}
 
           {/* STEP 3 - PAYMENT */}
-{currentStep === 3 && (
-  <div className="payment-container">
-    <h2 className="payment-header">Payment Information</h2>
+          {currentStep === 3 && (
+            <div>
+              <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: '600' }}>
+                Payment Information
+              </h2>
 
-    <div className="order-summary">
-      <h3 className="order-summary-header">Order Summary</h3>
-      <div className="summary-row">
-        <span>{service.name}</span>
-        <span>${service.price}</span>
-      </div>
-      <div className="summary-row">
-        <span>Service Date</span>
-        <span>{bookingDetails.date} at {bookingDetails.time}</span>
-      </div>
-      <div className="summary-total">
-        <span>Total</span>
-        <span>${service.price}</span>
-      </div>
-    </div>
+              <div style={{ background: '#f9fafb', padding: '20px', borderRadius: '8px', marginBottom: '25px' }}>
+                <h3 style={{ marginBottom: '15px', fontWeight: '600' }}>Order Summary</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span>{service.name}</span>
+                  <span>${service.price}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span>Service Date</span>
+                  <span>{bookingDetails.date} at {bookingDetails.time}</span>
+                </div>
+                <div style={{
+                  borderTop: '1px solid #e5e7eb',
+                  paddingTop: '10px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontWeight: '600',
+                  fontSize: '18px'
+                }}>
+                  <span>Total</span>
+                  <span>${service.price}</span>
+                </div>
+              </div>
 
-    {/* Payment Method Selection */}
-    <div className="payment-methods">
-      <label className="payment-method-label">Select Payment Method</label>
-      <div className="payment-method-buttons">
-        {['card', 'upi', 'cas'].map(method => (
-          <button
-            key={method}
-            onClick={() => setBookingDetails({ ...bookingDetails, paymentMethod: method })}
-            className={`payment-method-button ${bookingDetails.paymentMethod === method ? 'selected' : ''}`}
-          >
-            {method === 'card' ? '💳 Card' : method === 'upi' ? '📱 UPI' : '💸 Pay Later (CAS)'}
-          </button>
-        ))}
-      </div>
-    </div>
+              {/* Payment Method Selection */}
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{ display: 'block', marginBottom: '15px', fontWeight: '500' }}>Payment Method</label>
+                <div style={{ display: 'flex', gap: '15px' }}>
+                  {['card', 'upi', 'wallet'].map(method => (
+                    <button
+                      key={method}
+                      onClick={() => setBookingDetails({ ...bookingDetails, paymentMethod: method })}
+                      style={{
+                        padding: '15px 20px',
+                        border: bookingDetails.paymentMethod === method ? '2px solid #6366f1' : '1px solid #e5e7eb',
+                        background: bookingDetails.paymentMethod === method ? '#f8faff' : 'white',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        textTransform: 'capitalize',
+                        fontWeight: '500'
+                      }}
+                    >
+                      {method === 'card' ? '💳 Card' : method === 'upi' ? '📱 UPI' : '💰 Wallet'}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-    {/* Card Payment Details */}
-    {bookingDetails.paymentMethod === 'card' && (
-      <div className="card-details">
-        <input
-          type="text"
-          value={paymentDetails.cardNumber}
-          onChange={(e) => setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })}
-          placeholder="Card Number"
-          className="card-input"
-        />
-        <div className="card-inputs-row">
-          <input
-            type="text"
-            value={paymentDetails.expiryDate}
-            onChange={(e) => setPaymentDetails({ ...paymentDetails, expiryDate: e.target.value })}
-            placeholder="MM/YY"
-            className="card-input"
-          />
-          <input
-            type="text"
-            value={paymentDetails.cvv}
-            onChange={(e) => setPaymentDetails({ ...paymentDetails, cvv: e.target.value })}
-            placeholder="CVV"
-            className="card-input"
-          />
-        </div>
-        <input
-          type="text"
-          value={paymentDetails.cardName}
-          onChange={(e) => setPaymentDetails({ ...paymentDetails, cardName: e.target.value })}
-          placeholder="Cardholder Name"
-          className="card-input"
-        />
-      </div>
-    )}
+              {/* Card Details */}
+              {bookingDetails.paymentMethod === 'card' && (
+                <div style={{ display: 'grid', gap: '15px' }}>
+                  <input
+                    type="text"
+                    value={paymentDetails.cardNumber}
+                    onChange={(e) => setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })}
+                    placeholder="Card Number"
+                    style={{ padding: '12px', borderRadius: '8px', border: '2px solid #e5e7eb' }}
+                  />
+                  <div style={{ display: 'flex', gap: '15px' }}>
+                    <input
+                      type="text"
+                      value={paymentDetails.expiryDate}
+                      onChange={(e) => setPaymentDetails({ ...paymentDetails, expiryDate: e.target.value })}
+                      placeholder="MM/YY"
+                      style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '2px solid #e5e7eb' }}
+                    />
+                    <input
+                      type="text"
+                      value={paymentDetails.cvv}
+                      onChange={(e) => setPaymentDetails({ ...paymentDetails, cvv: e.target.value })}
+                      placeholder="CVV"
+                      style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '2px solid #e5e7eb' }}
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    value={paymentDetails.cardName}
+                    onChange={(e) => setPaymentDetails({ ...paymentDetails, cardName: e.target.value })}
+                    placeholder="Cardholder Name"
+                    style={{ padding: '12px', borderRadius: '8px', border: '2px solid #e5e7eb' }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
-    {/* UPI Payment - UPI Methods or Manual ID Entry */}
-    {bookingDetails.paymentMethod === 'upi' && (
-      <div className="upi-selection">
-        <h4 className="upi-header">Choose UPI Payment Method</h4>
-        <div className="upi-methods">
-          {['paytm', 'phonepe', 'googlepay'].map((upimethod) => (
-            <button
-              key={upimethod}
-              onClick={() => handleUPIDeepLink(upimethod)}
-              className="upi-method-button"
-            >
-              {upimethod === 'paytm' ? '📲 Paytm' : upimethod === 'phonepe' ? '📱 PhonePe' : '💳 Google Pay'}
-            </button>
-          ))}
-        </div>
-
-        <h5>Or Enter Your UPI ID</h5>
-        <input
-          type="text"
-          value={paymentDetails.upiId}
-          onChange={(e) => setPaymentDetails({ ...paymentDetails, upiId: e.target.value })}
-          placeholder="Enter UPI ID (e.g., username@upi)"
-          className="upi-id-input"
-        />
-        <button onClick={handleUPIPayment} className="upi-submit-btn">Proceed to Pay</button>
-
-        {/* UPI QR Option */}
-        <h5>Or Pay via QR Code</h5>
-        {upiQR && <img src={upiQR} alt="UPI QR" className="upi-qr" />}
-      </div>
-    )}
-
-    {/* Cash After Service (CAS) */}
-    {bookingDetails.paymentMethod === 'cas' && (
-      <div className="cas-confirmation">
-        <h4>Pay After Service</h4>
-        <p>You can pay for the service after it is completed. Confirm this option to continue.</p>
-        <button className="confirm-cas">Confirm & Pay Later</button>
-      </div>
-    )}
-  </div>
-)}
           {/* STEP 4 - CONFIRMATION */}
           {currentStep === 4 && (
             <div style={{ textAlign: 'center' }}>
