@@ -4,6 +4,7 @@
   status = 200
   force = true
 
+# Allow assets to be served normally
 [[redirects]]
   from = "/assets/*"
   to = "/assets/:splat"
