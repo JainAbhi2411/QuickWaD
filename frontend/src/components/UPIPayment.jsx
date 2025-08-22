@@ -8,9 +8,9 @@ const validateUPI = (upiId) => {
 };
 
 const UPIApps = [
-  { name: 'Google Pay', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Google_Pay_logo.svg/120px-Google_Pay_logo.svg.png' },
-  { name: 'PhonePe', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/PhonePe_logo.svg/120px-PhonePe_logo.svg.png' },
-  { name: 'Paytm', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Paytm_logo.svg/120px-Paytm_logo.svg.png' },
+  { name: 'Google Pay', icon: 'https://cdn.worldvectorlogo.com/logos/google-pay-1.svg' },
+  { name: 'PhonePe', icon: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/phonepe-icon.png' },
+  { name: 'Paytm', icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH3TZc7923_HIKidB0GCysjUMzAyDYb9LHLg&s' },
 ];
 
 export default function UPIPayment() {
