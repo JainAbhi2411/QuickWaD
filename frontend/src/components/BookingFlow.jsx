@@ -27,7 +27,9 @@ export default function BookingFlow() {
     setService,
     confirmedBooking,
     setConfirmedBooking,
-    steps
+    steps,
+    setPaymentStatus,
+    paymentStatus,
   } = useBooking();
 
   useEffect(() => {
@@ -84,21 +86,27 @@ export default function BookingFlow() {
       phone: bookingDetails.phone,
       instructions: bookingDetails.instructions,
       paymentMethod: bookingDetails.paymentMethod,
-      paymentDetails: paymentDetails.cardName,
+      paymentDetails: paymentDetails,  // Updated to pass full payment details
       totalPrice: totalPrice // Assuming price is from the service data
     };
 
     try {
       const response = await axios.post(`${apiUrl}/api/bookings/create`, bookingData, { withCredentials: true });
-      const userConfirmed = window.confirm('Do you want to confirm the booking?');
+      
+      if (response.data.success) {
+        const userConfirmed = window.confirm('Do you want to confirm the booking?');
 
-      if (userConfirmed) {
-        const bookingId = response.data.booking._id;
-        const confirmedResponse = await axios.get(`${apiUrl}/api/bookings/confirm/${bookingId}`, { withCredentials: true });
-        setConfirmedBooking(confirmedResponse.data.booking);
-        setCurrentStep(4);
+        if (userConfirmed) {
+          const bookingId = response.data.booking._id;
+          const confirmedResponse = await axios.get(`${apiUrl}/api/bookings/confirm/${bookingId}`, { withCredentials: true });
+          setConfirmedBooking(confirmedResponse.data.booking);
+          setPaymentStatus('confirmed');
+          setCurrentStep(4);  // Go to confirmation step
+        } else {
+          navigate("/orders");
+        }
       } else {
-        navigate("/orders");
+        alert('Booking failed!');
       }
     } catch (error) {
       console.error('Booking error:', error);

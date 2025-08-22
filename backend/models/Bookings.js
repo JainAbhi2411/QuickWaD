@@ -44,18 +44,26 @@ const bookingSchema = new mongoose.Schema({
   paymentMethod: {
     type: String,
     required: true,
-    enum: ['card', 'upi', 'wallet'] // Enum for the payment method
+    enum: ['card', 'upi', 'cas'] // Added Cash After Service option
   },
   paymentDetails: {
     cardNumber: { type: String },
     expiryDate: { type: String },
     cvv: { type: String },
-    cardName: { type: String }
+    cardName: { type: String },
+    upiId: { type: String },  // Store UPI ID for UPI payment
+    transactionId: { type: String },  // Optional: for tracking payment transaction (for UPI)
+    cashPaymentConfirmed: { type: Boolean, default: false } // Flag to indicate cash payment status
   },
   status: {
     type: String,
     default: 'pending', // Default status is pending until confirmed
     enum: ['pending','in_progress', 'started','confirmed', 'cancelled','completed'] 
+  },
+  paymentStatus: {
+    type: String,
+    default: 'pending', // Track payment status separately
+    enum: ['pending', 'completed', 'failed', 'in_progress']
   },
   totalPrice: {
     type: Number,
