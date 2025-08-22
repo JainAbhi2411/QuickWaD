@@ -3,7 +3,6 @@ import { useBooking } from '../context/bookingContext';
 
 // Helper function to validate UPI ID
 const validateUPI = (upiId) => {
-  // Basic UPI ID pattern check (ends with @upi or @okhdfcbank or similar)
   const regex = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+$/;
   return regex.test(upiId);
 };
@@ -13,7 +12,11 @@ export default function UPIPayment() {
   const [upiIdError, setUpiIdError] = useState('');
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upiId'); // Track whether it's UPI ID or QR code
+  const [qrCodeGenerated, setQrCodeGenerated] = useState(false); // Whether QR code is generated
+  const [timer, setTimer] = useState(0); // Timer for QR code payment
 
+  // Handle UPI ID change
   const handleUPIChange = (e) => {
     const upiId = e.target.value;
     setPaymentDetails({ ...paymentDetails, upiId });
@@ -24,8 +27,25 @@ export default function UPIPayment() {
     }
   };
 
+  // Handle QR Code Generation (for scanning)
+  const generateQRCode = () => {
+    setQrCodeGenerated(true);
+    setTimer(30); // 30-second timer for QR code expiration
+
+    const countdown = setInterval(() => {
+      setTimer((prev) => {
+        if (prev === 1) {
+          clearInterval(countdown);
+          setQrCodeGenerated(false); // Reset QR code if time runs out
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // Handle UPI Payment Processing
   const handlePayment = () => {
-    if (!validateUPI(paymentDetails.upiId)) {
+    if (selectedPaymentMethod === 'upiId' && !validateUPI(paymentDetails.upiId)) {
       setUpiIdError('Please enter a valid UPI ID.');
       return;
     }
@@ -33,7 +53,7 @@ export default function UPIPayment() {
     // Simulate UPI payment processing
     setIsPaymentProcessing(true);
     setPaymentStatus('Pending');
-    
+
     setTimeout(() => {
       setIsPaymentProcessing(false);
       setPaymentStatus('Success');
@@ -44,41 +64,98 @@ export default function UPIPayment() {
     <div style={{ display: 'grid', gap: '20px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '10px' }}>
       <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px', color: '#333' }}>UPI Payment</h2>
 
-      {/* UPI ID */}
-      <div style={{ marginBottom: '20px' }}>
-        <label htmlFor="upiId" style={{ fontWeight: '600', marginBottom: '8px', color: '#333' }}>Enter your UPI ID</label>
-        <input
-          type="text"
-          id="upiId"
-          value={paymentDetails.upiId}
-          onChange={handleUPIChange}
-          placeholder="example@upi"
+      {/* Payment Method Toggle */}
+      <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
+        <button
+          onClick={() => setSelectedPaymentMethod('upiId')}
           style={{
-            padding: '15px',
-            fontSize: '16px',
-            width: '100%',
+            padding: '15px 25px',
+            background: selectedPaymentMethod === 'upiId' ? '#6366f1' : 'white',
+            color: selectedPaymentMethod === 'upiId' ? 'white' : '#6366f1',
             borderRadius: '8px',
-            border: upiIdError ? '2px solid red' : '2px solid #e5e7eb',
+            border: '2px solid #6366f1',
             fontWeight: '600',
           }}
-        />
-        {upiIdError && <div style={{ color: 'red', fontSize: '12px' }}>{upiIdError}</div>}
+        >
+          Enter UPI ID
+        </button>
+        <button
+          onClick={() => setSelectedPaymentMethod('qrCode')}
+          style={{
+            padding: '15px 25px',
+            background: selectedPaymentMethod === 'qrCode' ? '#6366f1' : 'white',
+            color: selectedPaymentMethod === 'qrCode' ? 'white' : '#6366f1',
+            borderRadius: '8px',
+            border: '2px solid #6366f1',
+            fontWeight: '600',
+          }}
+        >
+          Scan QR Code
+        </button>
       </div>
 
-      {/* Show UPI QR Code */}
-      {paymentDetails.upiId && !upiIdError && (
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <h4 style={{ fontWeight: '600' }}>Scan this QR code with your UPI app</h4>
-          {/* You can replace this with a dynamic QR code generator */}
-          <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?data=${paymentDetails.upiId}&size=150x150`}
-            alt="UPI QR Code"
-            style={{ width: '150px', height: '150px', objectFit: 'contain', marginBottom: '20px' }}
+      {/* UPI ID Input */}
+      {selectedPaymentMethod === 'upiId' && (
+        <div style={{ marginBottom: '20px' }}>
+          <label htmlFor="upiId" style={{ fontWeight: '600', marginBottom: '8px', color: '#333' }}>Enter your UPI ID</label>
+          <input
+            type="text"
+            id="upiId"
+            value={paymentDetails.upiId}
+            onChange={handleUPIChange}
+            placeholder="example@upi"
+            style={{
+              padding: '15px',
+              fontSize: '16px',
+              width: '100%',
+              borderRadius: '8px',
+              border: upiIdError ? '2px solid red' : '2px solid #e5e7eb',
+              fontWeight: '600',
+            }}
           />
+          {upiIdError && <div style={{ color: 'red', fontSize: '12px' }}>{upiIdError}</div>}
         </div>
       )}
 
-      {/* Payment Confirmation Button */}
+      {/* QR Code Payment */}
+      {selectedPaymentMethod === 'qrCode' && (
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          {qrCodeGenerated ? (
+            <>
+              <h4 style={{ fontWeight: '600' }}>Scan this QR code with your UPI app</h4>
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?data=${paymentDetails.upiId}&size=150x150`}
+                alt="UPI QR Code"
+                style={{ width: '150px', height: '150px', objectFit: 'contain', marginBottom: '20px' }}
+              />
+              <div style={{ fontWeight: '600' }}>QR Code expires in {timer} seconds</div>
+            </>
+          ) : (
+            <div>
+              <button
+                onClick={generateQRCode}
+                style={{
+                  padding: '15px 25px',
+                  backgroundColor: '#6366f1',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: '600',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                }}
+              >
+                Generate QR Code
+              </button>
+              <p style={{ marginTop: '15px', fontSize: '14px' }}>
+                Scan the QR code with your UPI app to complete the payment.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Payment Confirmation */}
       <button
         onClick={handlePayment}
         disabled={isPaymentProcessing}
