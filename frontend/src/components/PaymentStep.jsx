@@ -3,6 +3,9 @@ import { useBooking } from '../context/bookingContext';
 
 export default function PaymentStep() {
   const { bookingDetails, setBookingDetails, paymentDetails, setPaymentDetails, service } = useBooking();
+  
+  const storedBookingData = JSON.parse(localStorage.getItem("bookingData")); 
+  const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
 
   return (
     <div>
@@ -14,7 +17,7 @@ export default function PaymentStep() {
         <h3 style={{ marginBottom: '15px', fontWeight: '600' }}>Order Summary</h3>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
           <span>{service.name}</span>
-          <span>${service.price}</span>
+          <span>${totalPrice}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
           <span>Service Date</span>
