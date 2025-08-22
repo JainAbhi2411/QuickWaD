@@ -63,6 +63,9 @@ export default function BookingFlow() {
     fetchServiceData();
   }, [id, location.pathname]);
 
+  const storedBookingData = JSON.parse(localStorage.getItem("bookingData")); 
+  const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
+
   const handleNext = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
   };
@@ -82,7 +85,7 @@ export default function BookingFlow() {
       instructions: bookingDetails.instructions,
       paymentMethod: bookingDetails.paymentMethod,
       paymentDetails: paymentDetails.cardName,
-      totalPrice: service.price // Assuming price is from the service data
+      totalPrice: totalPrice // Assuming price is from the service data
     };
 
     try {
