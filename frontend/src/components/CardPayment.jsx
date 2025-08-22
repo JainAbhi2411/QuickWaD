@@ -18,6 +18,11 @@ const getCardType = (cardNumber) => {
   return null;
 };
 
+// Helper function to format card number input as "#### #### #### ####"
+const formatCardNumber = (cardNumber) => {
+  return cardNumber.replace(/\s?/g, '').replace(/(.{4})/g, '$1 ').trim();
+};
+
 export default function CardPayment() {
   const { paymentDetails, setPaymentDetails } = useBooking();
 
@@ -27,11 +32,17 @@ export default function CardPayment() {
     expiryDate: '',
     cvv: '',
     cardName: '',
+    billingAddress: '',
+    billingCountry: '',
   });
 
   const handleCardNumberChange = (e) => {
-    const cardNumber = e.target.value.replace(/\s/g, ''); // Remove spaces
+    const cardNumber = e.target.value.replace(/\s/g, ''); // Remove spaces for validation
     setPaymentDetails({ ...paymentDetails, cardNumber });
+
+    // Format the card number with spaces for easier reading
+    const formattedCardNumber = formatCardNumber(cardNumber);
+    setPaymentDetails({ ...paymentDetails, cardNumber: formattedCardNumber });
 
     // Detect card type based on the number
     setCardType(getCardType(cardNumber));
@@ -43,8 +54,8 @@ export default function CardPayment() {
     // Basic validation
     let formErrors = {};
 
-    if (!paymentDetails.cardNumber || paymentDetails.cardNumber.length < 13) {
-      formErrors.cardNumber = 'Card number is required and should be at least 13 digits.';
+    if (!paymentDetails.cardNumber || paymentDetails.cardNumber.length < 19) {
+      formErrors.cardNumber = 'Card number is required and should be 16 digits.';
     }
     if (!paymentDetails.expiryDate || paymentDetails.expiryDate.length !== 5) {
       formErrors.expiryDate = 'Please enter a valid expiry date (MM/YY).';
@@ -54,6 +65,12 @@ export default function CardPayment() {
     }
     if (!paymentDetails.cardName) {
       formErrors.cardName = 'Cardholder name is required.';
+    }
+    if (!paymentDetails.billingAddress) {
+      formErrors.billingAddress = 'Billing address is required.';
+    }
+    if (!paymentDetails.billingCountry) {
+      formErrors.billingCountry = 'Please select a billing country.';
     }
 
     if (Object.keys(formErrors).length > 0) {
@@ -66,7 +83,33 @@ export default function CardPayment() {
 
   return (
     <div style={{ display: 'grid', gap: '20px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '10px' }}>
-      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>Payment Information</h2>
+      <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px', color: '#333' }}>Billing Information</h2>
+
+      {/* Billing Country */}
+      <div style={{ marginBottom: '20px' }}>
+        <label htmlFor="billingCountry" style={{ fontWeight: '600', marginBottom: '8px', color: '#333' }}>Billing Country</label>
+        <select
+          id="billingCountry"
+          value={paymentDetails.billingCountry}
+          onChange={(e) => setPaymentDetails({ ...paymentDetails, billingCountry: e.target.value })}
+          style={{
+            padding: '12px',
+            fontSize: '16px',
+            width: '100%',
+            borderRadius: '8px',
+            border: errors.billingCountry ? '2px solid red' : '2px solid #e5e7eb',
+            fontWeight: '600',
+          }}
+        >
+          <option value="">Select a country</option>
+          <option value="USA">USA</option>
+          <option value="India">India</option>
+          <option value="UK">UK</option>
+          <option value="Canada">Canada</option>
+          {/* Add more countries as needed */}
+        </select>
+        {errors.billingCountry && <div style={{ color: 'red', fontSize: '12px' }}>{errors.billingCountry}</div>}
+      </div>
 
       {/* Card Number */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -84,14 +127,21 @@ export default function CardPayment() {
             border: errors.cardNumber ? '2px solid red' : '2px solid #e5e7eb',
             marginBottom: '20px',
             fontWeight: '600',
+            letterSpacing: '1px',
           }}
         />
         {/* Card Type Icon */}
         {cardType && (
           <img
-            src={`https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Visa_Logo.svg/500px-Visa_Logo.svg.png`} // Visa example
+            src={`https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Visa_Logo.svg/500px-Visa_Logo.svg.png`} // Visa example (Replace with actual dynamic URLs)
             alt={`${cardType} logo`}
-            style={{ width: '40px', marginLeft: '10px' }}
+            style={{
+              width: '40px',
+              marginLeft: '10px',
+              objectFit: 'contain',
+              borderRadius: '5px',
+              transition: 'transform 0.3s',
+            }}
           />
         )}
       </div>
@@ -113,6 +163,7 @@ export default function CardPayment() {
               borderRadius: '8px',
               border: errors.expiryDate ? '2px solid red' : '2px solid #e5e7eb',
               fontWeight: '600',
+              letterSpacing: '1px',
             }}
           />
           {errors.expiryDate && <div style={{ color: 'red', fontSize: '12px' }}>{errors.expiryDate}</div>}
@@ -132,6 +183,7 @@ export default function CardPayment() {
               borderRadius: '8px',
               border: errors.cvv ? '2px solid red' : '2px solid #e5e7eb',
               fontWeight: '600',
+              letterSpacing: '1px',
             }}
           />
           {errors.cvv && <div style={{ color: 'red', fontSize: '12px' }}>{errors.cvv}</div>}
@@ -151,13 +203,32 @@ export default function CardPayment() {
           borderRadius: '8px',
           border: errors.cardName ? '2px solid red' : '2px solid #e5e7eb',
           fontWeight: '600',
+          letterSpacing: '1px',
         }}
       />
       {errors.cardName && <div style={{ color: 'red', fontSize: '12px' }}>{errors.cardName}</div>}
 
+      {/* Billing Address */}
+      <textarea
+        value={paymentDetails.billingAddress}
+        onChange={(e) => setPaymentDetails({ ...paymentDetails, billingAddress: e.target.value })}
+        placeholder="Billing Address"
+        style={{
+          padding: '15px',
+          fontSize: '16px',
+          width: '100%',
+          height: '100px',
+          borderRadius: '8px',
+          border: errors.billingAddress ? '2px solid red' : '2px solid #e5e7eb',
+          fontWeight: '600',
+          letterSpacing: '1px',
+        }}
+      />
+      {errors.billingAddress && <div style={{ color: 'red', fontSize: '12px' }}>{errors.billingAddress}</div>}
+
       {/* Card Details Helper Text */}
       <div style={{ marginTop: '10px', fontSize: '14px', color: '#6b7280' }}>
-        <p>By entering your card details, you agree to our Terms & Conditions and Privacy Policy.</p>
+        <p>This is a secure transaction, and your card information will be encrypted.</p>
       </div>
 
       {/* Payment Button */}
@@ -172,7 +243,10 @@ export default function CardPayment() {
           fontWeight: '600',
           fontSize: '16px',
           cursor: 'pointer',
+          transition: 'background-color 0.3s ease',
         }}
+        onMouseOver={(e) => e.target.style.backgroundColor = '#4f46e5'}
+        onMouseOut={(e) => e.target.style.backgroundColor = '#6366f1'}
       >
         Pay Now
       </button>
