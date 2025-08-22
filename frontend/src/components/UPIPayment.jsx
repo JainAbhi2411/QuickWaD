@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBooking } from '../context/bookingContext';
 
 // Helper function to validate UPI ID
@@ -7,14 +7,21 @@ const validateUPI = (upiId) => {
   return regex.test(upiId);
 };
 
+const UPIApps = [
+  { name: 'Google Pay', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Google_Pay_logo.svg/120px-Google_Pay_logo.svg.png' },
+  { name: 'PhonePe', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/PhonePe_logo.svg/120px-PhonePe_logo.svg.png' },
+  { name: 'Paytm', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Paytm_logo.svg/120px-Paytm_logo.svg.png' },
+];
+
 export default function UPIPayment() {
   const { paymentDetails, setPaymentDetails } = useBooking();
   const [upiIdError, setUpiIdError] = useState('');
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upiId'); // Track whether it's UPI ID or QR code
-  const [qrCodeGenerated, setQrCodeGenerated] = useState(false); // Whether QR code is generated
-  const [timer, setTimer] = useState(0); // Timer for QR code payment
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upiId');
+  const [qrCodeGenerated, setQrCodeGenerated] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
 
   // Handle UPI ID change
   const handleUPIChange = (e) => {
@@ -37,6 +44,7 @@ export default function UPIPayment() {
         if (prev === 1) {
           clearInterval(countdown);
           setQrCodeGenerated(false); // Reset QR code if time runs out
+          setShowTimeoutWarning(true); // Show timeout warning
         }
         return prev - 1;
       });
@@ -50,7 +58,6 @@ export default function UPIPayment() {
       return;
     }
 
-    // Simulate UPI payment processing
     setIsPaymentProcessing(true);
     setPaymentStatus('Pending');
 
@@ -155,6 +162,21 @@ export default function UPIPayment() {
         </div>
       )}
 
+      {/* Payment Details Confirmation */}
+      <div style={{ marginTop: '20px' }}>
+        <h3 style={{ fontWeight: '600' }}>Payment Details</h3>
+        <p><strong>UPI ID:</strong> {paymentDetails.upiId}</p>
+        <p><strong>Amount:</strong> ₹{paymentDetails.amount}</p>
+        <p><strong>Description:</strong> {paymentDetails.description}</p>
+      </div>
+
+      {/* UPI App Logos (To Prompt User to Open UPI Apps) */}
+      <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
+        {UPIApps.map((app, index) => (
+          <img key={index} src={app.icon} alt={app.name} style={{ width: '50px', height: '50px', cursor: 'pointer' }} />
+        ))}
+      </div>
+
       {/* Payment Confirmation */}
       <button
         onClick={handlePayment}
@@ -188,6 +210,13 @@ export default function UPIPayment() {
           }}
         >
           {paymentStatus === 'Success' ? 'Payment Successful!' : 'Payment Pending...'}
+        </div>
+      )}
+
+      {/* Timeout Warning */}
+      {showTimeoutWarning && (
+        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#ff9800', color: 'white', borderRadius: '8px', fontWeight: '600', textAlign: 'center' }}>
+          <p>QR code has expired! Please try again.</p>
         </div>
       )}
     </div>
