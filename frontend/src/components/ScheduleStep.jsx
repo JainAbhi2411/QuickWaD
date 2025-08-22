@@ -8,13 +8,11 @@ const timeSlots = [
 ];
 
 export default function ScheduleStep() {
-  const { bookingDetails, setBookingDetails } = useBooking();
+  const { bookingDetails, setBookingDetails , service } = useBooking();
 
   return (
     <div>
-      <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: '600' }}>
-        Schedule Your Service
-      </h2>
+      <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: '600' }}> Schedule Your Service: <span style={{ color: '#6366f1' }}>{service.name}</span> </h2>
       <div style={{ marginBottom: '25px' }}>
         <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Select Date</label>
         <input
