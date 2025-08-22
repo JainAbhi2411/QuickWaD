@@ -111,6 +111,17 @@ export default function CardPayment() {
         {errors.billingCountry && <div style={{ color: 'red', fontSize: '12px' }}>{errors.billingCountry}</div>}
       </div>
 
+       {/* Accepted Cards */}
+      <div style={{ marginTop: '20px', fontSize: '14px', color: '#6b7280' }}>
+        <p style={{ fontWeight: '600' }}>We accept the following cards:</p>
+        <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTvw10q8UEI9-Pd4QJ5getpNSCZiuvzP0fMw&s" alt="Visa" style={{ width: '50px' }} />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaYFc0LxnBekf6fVV7eehPXk7qLTBPLM922w&s" alt="MasterCard" style={{ width: '50px' }} />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiJvoiJDpokzyIlgKZtfm3fpr2zv2kdW6hBg&s" alt="American Express" style={{ width: '50px' }} />
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQslI5EhEGQeZ15bfFh7Esho6L9BqRev8s9EQ&s" alt="Discover" style={{ width: '50px' }} />
+        </div>
+      </div>
+
       {/* Card Number */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <input
@@ -226,16 +237,7 @@ export default function CardPayment() {
       />
       {errors.billingAddress && <div style={{ color: 'red', fontSize: '12px' }}>{errors.billingAddress}</div>}
 
-      {/* Accepted Cards */}
-      <div style={{ marginTop: '20px', fontSize: '14px', color: '#6b7280' }}>
-        <p style={{ fontWeight: '600' }}>We accept the following cards:</p>
-        <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTvw10q8UEI9-Pd4QJ5getpNSCZiuvzP0fMw&s" alt="Visa" style={{ width: '50px' }} />
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaYFc0LxnBekf6fVV7eehPXk7qLTBPLM922w&s" alt="MasterCard" style={{ width: '50px' }} />
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiJvoiJDpokzyIlgKZtfm3fpr2zv2kdW6hBg&s" alt="American Express" style={{ width: '50px' }} />
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQslI5EhEGQeZ15bfFh7Esho6L9BqRev8s9EQ&s" alt="Discover" style={{ width: '50px' }} />
-        </div>
-      </div>
+     
 
       {/* Submit Payment */}
       <button
