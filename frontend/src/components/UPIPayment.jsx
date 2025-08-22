@@ -7,6 +7,22 @@ const validateUPI = (upiId) => {
   return regex.test(upiId);
 };
 
+// Simulate sending payment request to UPI ID (replace with actual API later)
+const sendUPIPaymentRequest = async (upiId, amount) => {
+  // Simulating API call to send payment request (replace this with actual API)
+  console.log(`Sending payment request of ₹${amount} to UPI ID: ${upiId}`);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('Payment request sent successfully.');
+    }, 2000);
+  });
+};
+
+// Simulated QR code generation URL (replace with actual payment gateway)
+const generatePaymentQR = (upiId, amount) => {
+  return `https://example.com/pay?upiId=${upiId}&amount=${amount}`;
+};
+
 const UPIApps = [
   { name: 'Google Pay', icon: 'https://cdn.worldvectorlogo.com/logos/google-pay-1.svg' },
   { name: 'PhonePe', icon: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/phonepe-icon.png' },
@@ -22,6 +38,8 @@ export default function UPIPayment() {
   const [qrCodeGenerated, setQrCodeGenerated] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
+
+  const totalAmount = 500; // Example: replace with dynamic amount from booking
 
   // Handle UPI ID change
   const handleUPIChange = (e) => {
@@ -52,7 +70,7 @@ export default function UPIPayment() {
   };
 
   // Handle UPI Payment Processing
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (selectedPaymentMethod === 'upiId' && !validateUPI(paymentDetails.upiId)) {
       setUpiIdError('Please enter a valid UPI ID.');
       return;
@@ -61,10 +79,12 @@ export default function UPIPayment() {
     setIsPaymentProcessing(true);
     setPaymentStatus('Pending');
 
-    setTimeout(() => {
+    // If UPI ID payment method is selected, send the payment request
+    if (selectedPaymentMethod === 'upiId') {
+      const paymentRequestMessage = await sendUPIPaymentRequest(paymentDetails.upiId, totalAmount);
       setIsPaymentProcessing(false);
-      setPaymentStatus('Success');
-    }, 3000); // Simulate 3-second payment processing
+      setPaymentStatus(paymentRequestMessage);
+    }
   };
 
   return (
@@ -131,7 +151,7 @@ export default function UPIPayment() {
             <>
               <h4 style={{ fontWeight: '600' }}>Scan this QR code with your UPI app</h4>
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?data=${paymentDetails.upiId}&size=150x150`}
+                src={`https://api.qrserver.com/v1/create-qr-code/?data=${generatePaymentQR(paymentDetails.upiId, totalAmount)}&size=150x150`}
                 alt="UPI QR Code"
                 style={{ width: '150px', height: '150px', objectFit: 'contain', marginBottom: '20px' }}
               />
@@ -166,11 +186,11 @@ export default function UPIPayment() {
       <div style={{ marginTop: '20px' }}>
         <h3 style={{ fontWeight: '600' }}>Payment Details</h3>
         <p><strong>UPI ID:</strong> {paymentDetails.upiId}</p>
-        <p><strong>Amount:</strong> ₹{paymentDetails.amount}</p>
-        <p><strong>Description:</strong> {paymentDetails.description}</p>
+        <p><strong>Amount:</strong> ₹{totalAmount}</p>
+        <p><strong>Description:</strong> Service Booking Payment</p>
       </div>
 
-      {/* UPI App Logos (To Prompt User to Open UPI Apps) */}
+      {/* UPI App Logos */}
       <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
         {UPIApps.map((app, index) => (
           <img key={index} src={app.icon} alt={app.name} style={{ width: '50px', height: '50px', cursor: 'pointer' }} />
