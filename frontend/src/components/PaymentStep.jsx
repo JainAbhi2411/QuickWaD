@@ -17,12 +17,26 @@ export default function PaymentStep() {
         <h3 style={{ marginBottom: '15px', fontWeight: '600' }}>Order Summary</h3>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
           <span>{service.name}</span>
-          <span>${totalPrice}</span>
+          <span>${service.price}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
           <span>Service Date</span>
           <span>{bookingDetails.date} at {bookingDetails.time}</span>
         </div>
+
+        {/* Addons List */}
+        {addons && addons.length > 0 && (
+          <div style={{ marginTop: '15px' }}>
+            <h4 style={{ fontWeight: '600' }}>Addons:</h4>
+            {addons.map((addon, index) => (
+              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span>{addon.name}</span>
+                <span>${addon.price}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div style={{
           borderTop: '1px solid #e5e7eb',
           paddingTop: '10px',
@@ -32,7 +46,7 @@ export default function PaymentStep() {
           fontSize: '18px'
         }}>
           <span>Total</span>
-          <span>${service.price}</span>
+          <span>${totalPrice}</span>
         </div>
       </div>
 
