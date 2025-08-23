@@ -31,7 +31,7 @@ export default function CashAfterService() {
     // Simulate sending payment request to the backend
     setIsProcessing(true);
     try {
-      const response = await axios.post(`${apiUrl}/api/payment`, {
+      const response = await axios.post(`${apiUrl}/api/bookings/payment`, {
         paymentMethod: 'cash', // Specify payment method as cash
         paymentDetails: {
           ...paymentDetails, // Send the payment details (e.g., address, phone, etc.)

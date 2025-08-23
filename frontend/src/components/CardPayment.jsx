@@ -87,7 +87,7 @@ export default function CardPayment() {
       setIsProcessing(true);
       try {
         // Send payment details to the backend for processing (all methods using the same endpoint)
-        const response = await axios.post(`${apiUrl}/api/payment`, {
+        const response = await axios.post(`${apiUrl}/api/bookings/payment`, {
           paymentMethod: 'card',  // Specify payment method
           paymentDetails,  // Send all payment details
           totalPrice: totalPrice,  // Assuming totalPrice is part of paymentDetails

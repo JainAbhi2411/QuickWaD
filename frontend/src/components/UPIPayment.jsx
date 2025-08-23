@@ -72,7 +72,7 @@ export default function UPIPayment() {
 
     try {
       // Send payment details to the backend
-      const response = await axios.post(`${apiUrl}/api/payment`, {
+      const response = await axios.post(`${apiUrl}/api/bookings/payment`, {
         paymentMethod: 'upi', // Specify payment method
         paymentDetails: {
           upiId: paymentDetails.upiId
