@@ -51,8 +51,6 @@ exports.createPaymentLink = async (req, res) => {
       receipt: `receipt_${new Date().getTime()}`,
       payment_capture: 1,
       description: 'Service Payment',
-      customer_contact: customerPhone,
-      customer_name: customerName,
       method: 'upi', // UPI payment method
     };
 
