@@ -1,11 +1,73 @@
 const Booking = require('../models/Bookings');
-const User  = require('../models/User'); // Assuming the User model is imported correctly
+const User = require('../models/User'); // Assuming the User model is imported correctly
 const ExpertService = require('../models/ExpertService');
 const OnlineService = require('../models/OnlineService');
 const PremiumService = require('../models/PremiumService');
 const ServiceCategory = require('../models/serviceCategory');
- // Importing various services
 
+// Mock payment gateway simulation for UPI, Cash, and Card methods
+const mockUPIPayment = async (upiId, totalPrice) => {
+  if (upiId.includes('@upi')) {
+    // Simulate a successful UPI payment for valid UPI IDs
+    return { status: 'success', message: `Payment of ₹${totalPrice} to ${upiId} successful!` };
+  } else {
+    // Simulate a failure for invalid UPI IDs
+    return { status: 'failure', message: 'Invalid UPI ID. Payment failed.' };
+  }
+};
+
+const mockCardPayment = async (cardNumber, totalPrice) => {
+  // Simulate a successful card payment for valid card numbers
+  const validCardPrefix = '4'; // Let's assume cards starting with '4' are valid (Visa)
+  if (cardNumber.startsWith(validCardPrefix)) {
+    return { status: 'success', message: `Payment of ₹${totalPrice} via card ${cardNumber} successful!` };
+  } else {
+    return { status: 'failure', message: 'Invalid card number. Payment failed.' };
+  }
+};
+
+const mockCashPayment = () => {
+  // Simulate a pending cash payment
+  return { status: 'pending', message: 'Cash payment pending. To be paid after service completion.' };
+};
+
+// Create a new route for handling payment requests
+exports.handlePayment = async (req, res) => {
+  const { paymentMethod, paymentDetails, totalPrice } = req.body;
+
+  try {
+    let paymentResponse;
+
+    // Handle UPI payment request
+    if (paymentMethod === 'upi') {
+      paymentResponse = await mockUPIPayment(paymentDetails.upiId, totalPrice);
+    }
+
+    // Handle Card payment request
+    if (paymentMethod === 'card') {
+      paymentResponse = await mockCardPayment(paymentDetails.cardNumber, totalPrice);
+    }
+
+    // Handle Cash payment (no need for external payment gateway, just mark as pending)
+    if (paymentMethod === 'cash') {
+      paymentResponse = mockCashPayment();
+    }
+
+    // Update the booking with payment status based on response
+    if (paymentResponse.status === 'success' || paymentResponse.status === 'pending') {
+      // Confirm the payment status if successful
+      res.status(200).json({ paymentStatus: 'confirmed', message: paymentResponse.message });
+    } else {
+      // Mark as failed if the payment is unsuccessful
+      res.status(400).json({ paymentStatus: 'failed', message: paymentResponse.message });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Payment processing error', error });
+  }
+};
+
+// Create Booking with UPI, Card, or Cash After Service
 exports.createBooking = async (req, res) => {
   const {
     userId,
@@ -17,39 +79,28 @@ exports.createBooking = async (req, res) => {
     instructions,
     paymentMethod,
     paymentDetails,
-    totalPrice
+    totalPrice,
   } = req.body;
 
   try {
-    // Log the userId being passed in the request
-    console.log("userId:", userId);
-
     // 1. Fetch the user from the database
     const user = await User.findById(userId);
-
-    // Log the fetched user data
-    console.log("user:", user);
-
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     // 2. Fetch the service based on the serviceName
-    let service = await OnlineService.findOne({ name: serviceName })
-  || await PremiumService.findOne({ name: serviceName })
-  || await ExpertService.findOne({ name: serviceName });
+    let service =
+      (await OnlineService.findOne({ name: serviceName })) ||
+      (await PremiumService.findOne({ name: serviceName })) ||
+      (await ExpertService.findOne({ name: serviceName }));
 
-// If the service was not found in other collections, check in the ServiceCategory
-if (!service) {
-  const serviceCategory = await ServiceCategory.findOne({ "services.name": serviceName });
-  
-  // If the ServiceCategory was found, find the specific service inside the category
-  if (serviceCategory) {
-    service = serviceCategory.services.find(s => s.name === serviceName);
-  }
-}
+    if (!service) {
+      const serviceCategory = await ServiceCategory.findOne({ 'services.name': serviceName });
+      if (serviceCategory) {
+        service = serviceCategory.services.find((s) => s.name === serviceName);
+      }
+    }
 
-if (!service) {
-  return res.status(404).json({ message: 'Service not found' });
-}
+    if (!service) return res.status(404).json({ message: 'Service not found' });
 
     // 3. Prepare the service details to be stored in the booking
     const serviceDetails = {
@@ -57,12 +108,12 @@ if (!service) {
       duration: service.duration,
     };
 
-    // 4. Create the booking object
+    // 4. Create the booking object without paymentStatus initially
     const newBooking = new Booking({
       user: userId,
       serviceName: service.name,
       serviceDetails: serviceDetails,
-      date: new Date(date),  // Ensure the date is converted into a Date object
+      date: new Date(date), // Ensure the date is converted into a Date object
       time,
       address,
       phone,
@@ -71,12 +122,13 @@ if (!service) {
       paymentDetails,
       totalPrice,
       status: 'pending', // Set default status to pending
+      paymentStatus: 'pending', // Default to pending if not paid
     });
 
-    // 5. Save the booking to the database
+    // Save the booking to the database (we'll update paymentStatus later based on mock payment)
     await newBooking.save();
 
-    // 6. Return a response with the created booking
+    // Return response after booking creation
     res.status(201).json({ message: 'Booking created successfully', booking: newBooking });
 
   } catch (error) {
@@ -84,7 +136,8 @@ if (!service) {
     res.status(500).json({ message: 'Server error', error });
   }
 };
-// Confirm a booking (e.g., after payment is processed)
+
+// Confirm a booking (e.g., after payment is processed or completed)
 exports.confirmBooking = async (req, res) => {
   const { bookingId } = req.params;
 
@@ -93,8 +146,18 @@ exports.confirmBooking = async (req, res) => {
     const booking = await Booking.findById(bookingId);
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
-    // Update the booking status to confirmed
-    booking.status = 'confirmed';
+    // Check the payment status
+    if (booking.paymentStatus === 'confirmed') {
+      // Update the booking status to confirmed
+      booking.status = 'confirmed';
+    } else if (booking.paymentMethod === 'cash' && booking.status === 'completed') {
+      // If payment is 'cash', mark payment as completed after service completion
+      booking.paymentStatus = 'confirmed'; // Mark payment as confirmed after service completion
+      booking.status = 'confirmed';
+    } else {
+      // For failed payments, set status as cancelled
+      booking.status = 'cancelled';
+    }
 
     // Save the updated booking
     await booking.save();
@@ -118,6 +181,7 @@ exports.getUserBookings = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 // Controller to change the status of a booking
 exports.changeBookingStatus = async (req, res) => {
   const { id } = req.params; // Booking ID from URL parameter
@@ -162,68 +226,46 @@ exports.getTrackingData = async (req, res) => {
       { id: 2, title: 'Professional Assigned', completed: false, time: '' },
       { id: 3, title: 'Professional En Route', completed: false, time: '' },
       { id: 4, title: 'Service Started', completed: false, time: '' },
-      { id: 5, title: 'Service Completed', completed: false, time: '' }
+      { id: 5, title: 'Service Completed', completed: false, time: '' },
     ];
 
     // Logic to mark steps as completed based on the booking status and use dynamic times
     switch (booking.status) {
       case 'confirmed':
         steps[0].completed = true;
-        steps[0].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[1].completed = true;
-        steps[1].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         break;
       case 'in_progress':
         steps[0].completed = true;
-        steps[0].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[1].completed = true;
-        steps[1].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[2].completed = true;
-        steps[2].time = new Date(booking.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[3].completed = true;
-        steps[3].time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         break;
       case 'started':
         steps[0].completed = true;
-        steps[0].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[1].completed = true;
-        steps[1].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[2].completed = true;
-        steps[2].time = new Date(booking.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[3].completed = true;
-        steps[3].time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         break;
       case 'completed':
         steps[0].completed = true;
-        steps[0].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[1].completed = true;
-        steps[1].time = new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[2].completed = true;
-        steps[2].time = new Date(booking.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[3].completed = true;
-        steps[3].time = new Date(booking.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         steps[4].completed = true;
-        steps[4].time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        // After all steps are completed, update the booking status to 'completed' in the database if not already done
-        if (booking.status !== 'completed') {
-          booking.status = 'completed';
-          await booking.save();
-        }
         break;
       default:
         break;
     }
 
-    // Prepare the response with updated tracking data
     const trackingData = {
       status: booking.status,
       estimatedArrival: new Date(Date.now() + Math.random() * 300000).toLocaleTimeString([], {
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
       location: 'En route to your location',
-      steps: steps
+      steps: steps,
     };
 
     return res.status(200).json({ trackingData });
@@ -232,4 +274,3 @@ exports.getTrackingData = async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
-

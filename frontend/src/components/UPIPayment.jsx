@@ -1,21 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useBooking } from '../context/bookingContext';
+import axios from 'axios';
 
 // Helper function to validate UPI ID
 const validateUPI = (upiId) => {
   const regex = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+$/;
   return regex.test(upiId);
-};
-
-// Simulate sending payment request to UPI ID (replace with actual API later)
-const sendUPIPaymentRequest = async (upiId, amount) => {
-  // Simulating API call to send payment request (replace this with actual API)
-  console.log(`Sending payment request of ₹${amount} to UPI ID: ${upiId}`);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve('Payment request sent successfully.');
-    }, 2000);
-  });
 };
 
 // Simulated QR code generation URL (replace with actual payment gateway)
@@ -30,15 +20,13 @@ const UPIApps = [
 ];
 
 export default function UPIPayment() {
-  const { paymentDetails, setPaymentDetails } = useBooking();
+  const { paymentDetails, setPaymentDetails, setPaymentStatus } = useBooking();
   const [upiIdError, setUpiIdError] = useState('');
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upiId');
   const [qrCodeGenerated, setQrCodeGenerated] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
-
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upiId');
   const totalAmount = 500; // Example: replace with dynamic amount from booking
 
   // Handle UPI ID change
@@ -79,11 +67,29 @@ export default function UPIPayment() {
     setIsPaymentProcessing(true);
     setPaymentStatus('Pending');
 
-    // If UPI ID payment method is selected, send the payment request
-    if (selectedPaymentMethod === 'upiId') {
-      const paymentRequestMessage = await sendUPIPaymentRequest(paymentDetails.upiId, totalAmount);
+    try {
+      // Send payment details to the backend
+      const response = await axios.post('/api/payment', {
+        paymentMethod: 'upi', // Specify payment method
+        paymentDetails: {
+          upiId: paymentDetails.upiId
+        },
+        totalPrice: totalAmount, // Send total amount for payment
+      });
+
+      // Handle success or failure based on backend response
+      if (response.data.paymentStatus === 'confirmed') {
+        setPaymentStatus('confirmed'); // Update payment status to confirmed
+        alert('Payment successful!');
+      } else {
+        setPaymentStatus('failed'); // Set status to failed if payment fails
+        alert('Payment failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      alert('There was an issue with payment processing.');
+    } finally {
       setIsPaymentProcessing(false);
-      setPaymentStatus(paymentRequestMessage);
     }
   };
 

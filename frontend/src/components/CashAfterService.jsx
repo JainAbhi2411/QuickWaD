@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useBooking } from '../context/bookingContext';
+import axios from 'axios';
 
 export default function CashAfterService() {
+  const { paymentDetails, setPaymentStatus } = useBooking();
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [serviceStatus, setServiceStatus] = useState('pending');
   const [paymentReminder, setPaymentReminder] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     // Simulate service status update (in a real-world app, this would be dynamic)
@@ -14,9 +18,38 @@ export default function CashAfterService() {
     return () => clearInterval(timer); // Clean up the interval
   }, []);
 
-  const handleConfirmPayment = () => {
+  const handleConfirmPayment = async () => {
     setIsConfirmed(true);
     setPaymentReminder('You will be reminded to pay after the service is completed.');
+    
+    // Mark the payment status as pending initially
+    setPaymentStatus('pending');
+
+    // Simulate sending payment request to the backend
+    setIsProcessing(true);
+    try {
+      const response = await axios.post('/api/payment', {
+        paymentMethod: 'cash', // Specify payment method as cash
+        paymentDetails: {
+          ...paymentDetails, // Send the payment details (e.g., address, phone, etc.)
+        },
+        totalPrice: 500, // Assuming static price for now, replace with dynamic amount
+      });
+
+      if (response.data.paymentStatus === 'confirmed') {
+        setPaymentStatus('confirmed'); // Payment status is confirmed once the service is completed
+        alert('Payment confirmed. Thank you for your payment!');
+      } else {
+        setPaymentStatus('failed');
+        alert('Payment confirmation failed. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error confirming payment:', error);
+      setPaymentStatus('failed');
+      alert('There was an issue with payment processing.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -29,13 +62,16 @@ export default function CashAfterService() {
 
       {/* Service Status */}
       <div style={{ marginBottom: '15px' }}>
-        <strong>Service Status:</strong> <span style={{ color: serviceStatus === 'completed' ? 'green' : 'orange' }}>{serviceStatus === 'completed' ? 'Service Completed' : 'Service Pending'}</span>
+        <strong>Service Status:</strong> <span style={{ color: serviceStatus === 'completed' ? 'green' : 'orange' }}>
+          {serviceStatus === 'completed' ? 'Service Completed' : 'Service Pending'}
+        </span>
       </div>
 
       {/* Confirmation Button */}
       {!isConfirmed ? (
         <button
           onClick={handleConfirmPayment}
+          disabled={isProcessing}
           style={{
             padding: '12px 20px',
             backgroundColor: '#6366f1',
@@ -48,7 +84,7 @@ export default function CashAfterService() {
             transition: 'background-color 0.3s ease',
           }}
         >
-          Confirm Cash Payment
+          {isProcessing ? 'Processing...' : 'Confirm Cash Payment'}
         </button>
       ) : (
         <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#d1fad1', color: '#2d7a2f', borderRadius: '8px', fontWeight: '600' }}>

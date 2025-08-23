@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useBooking } from '../context/bookingContext';
+import axios from 'axios';
 
 // Card Type Detection using regex for simplicity
 const getCardType = (cardNumber) => {
@@ -24,7 +25,7 @@ const formatCardNumber = (cardNumber) => {
 };
 
 export default function CardPayment() {
-  const { paymentDetails, setPaymentDetails } = useBooking();
+  const { paymentDetails, setPaymentDetails, setPaymentStatus } = useBooking(); // Corrected use of context
 
   const [cardType, setCardType] = useState('');
   const [errors, setErrors] = useState({
@@ -35,6 +36,8 @@ export default function CardPayment() {
     billingAddress: '',
     billingCountry: '',
   });
+
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleCardNumberChange = (e) => {
     const cardNumber = e.target.value.replace(/\s/g, ''); // Remove spaces for validation
@@ -48,7 +51,7 @@ export default function CardPayment() {
     setCardType(getCardType(cardNumber));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Basic validation
@@ -76,8 +79,28 @@ export default function CardPayment() {
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
     } else {
-      // Proceed with payment (mocked)
-      alert('Payment processing...');
+      setIsProcessing(true);
+      try {
+        // Send payment details to the backend for processing (all methods using the same endpoint)
+        const response = await axios.post('/api/payment', {
+          paymentMethod: 'card',  // Specify payment method
+          paymentDetails,  // Send all payment details
+          totalPrice: paymentDetails.totalPrice,  // Assuming totalPrice is part of paymentDetails
+        });
+
+        if (response.data.paymentStatus === 'confirmed') {
+          // Payment is confirmed, update paymentStatus in the context
+          alert('Payment successful!');
+          setPaymentStatus('confirmed'); // Update payment status
+        } else {
+          alert('Payment failed. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error processing payment:', error);
+        alert('There was an issue with payment processing.');
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
 
@@ -106,20 +129,8 @@ export default function CardPayment() {
           <option value="India">India</option>
           <option value="UK">UK</option>
           <option value="Canada">Canada</option>
-          {/* Add more countries as needed */}
         </select>
         {errors.billingCountry && <div style={{ color: 'red', fontSize: '12px' }}>{errors.billingCountry}</div>}
-      </div>
-
-       {/* Accepted Cards */}
-      <div style={{ marginTop: '20px', fontSize: '14px', color: '#6b7280' }}>
-        <p style={{ fontWeight: '600' }}>We accept the following cards:</p>
-        <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTvw10q8UEI9-Pd4QJ5getpNSCZiuvzP0fMw&s" alt="Visa" style={{ width: '50px' }} />
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaYFc0LxnBekf6fVV7eehPXk7qLTBPLM922w&s" alt="MasterCard" style={{ width: '50px' }} />
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiJvoiJDpokzyIlgKZtfm3fpr2zv2kdW6hBg&s" alt="American Express" style={{ width: '50px' }} />
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQslI5EhEGQeZ15bfFh7Esho6L9BqRev8s9EQ&s" alt="Discover" style={{ width: '50px' }} />
-        </div>
       </div>
 
       {/* Card Number */}
@@ -141,17 +152,15 @@ export default function CardPayment() {
             letterSpacing: '1px',
           }}
         />
-        {/* Card Type Icon */}
         {cardType && (
           <img
-            src={`https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Visa_Logo.svg/500px-Visa_Logo.svg.png`} // Visa example (Replace with actual dynamic URLs)
+            src={`https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Visa_Logo.svg/500px-Visa_Logo.svg.png`}
             alt={`${cardType} logo`}
             style={{
               width: '40px',
               marginLeft: '10px',
               objectFit: 'contain',
               borderRadius: '5px',
-              transition: 'transform 0.3s',
             }}
           />
         )}
@@ -173,11 +182,8 @@ export default function CardPayment() {
               width: '100%',
               borderRadius: '8px',
               border: errors.expiryDate ? '2px solid red' : '2px solid #e5e7eb',
-              fontWeight: '600',
-              letterSpacing: '1px',
             }}
           />
-          {errors.expiryDate && <div style={{ color: 'red', fontSize: '12px' }}>{errors.expiryDate}</div>}
         </div>
 
         <div style={{ flex: 1 }}>
@@ -193,55 +199,15 @@ export default function CardPayment() {
               width: '100%',
               borderRadius: '8px',
               border: errors.cvv ? '2px solid red' : '2px solid #e5e7eb',
-              fontWeight: '600',
-              letterSpacing: '1px',
             }}
           />
-          {errors.cvv && <div style={{ color: 'red', fontSize: '12px' }}>{errors.cvv}</div>}
         </div>
       </div>
-
-      {/* Cardholder Name */}
-      <input
-        type="text"
-        value={paymentDetails.cardName}
-        onChange={(e) => setPaymentDetails({ ...paymentDetails, cardName: e.target.value })}
-        placeholder="Cardholder Name"
-        style={{
-          padding: '15px',
-          fontSize: '16px',
-          width: '100%',
-          borderRadius: '8px',
-          border: errors.cardName ? '2px solid red' : '2px solid #e5e7eb',
-          fontWeight: '600',
-          letterSpacing: '1px',
-        }}
-      />
-      {errors.cardName && <div style={{ color: 'red', fontSize: '12px' }}>{errors.cardName}</div>}
-
-      {/* Billing Address */}
-      <textarea
-        value={paymentDetails.billingAddress}
-        onChange={(e) => setPaymentDetails({ ...paymentDetails, billingAddress: e.target.value })}
-        placeholder="Billing Address"
-        style={{
-          padding: '15px',
-          fontSize: '16px',
-          width: '100%',
-          height: '100px',
-          borderRadius: '8px',
-          border: errors.billingAddress ? '2px solid red' : '2px solid #e5e7eb',
-          fontWeight: '600',
-          letterSpacing: '1px',
-        }}
-      />
-      {errors.billingAddress && <div style={{ color: 'red', fontSize: '12px' }}>{errors.billingAddress}</div>}
-
-     
 
       {/* Submit Payment */}
       <button
         onClick={handleSubmit}
+        disabled={isProcessing}
         style={{
           padding: '15px 30px',
           backgroundColor: '#6366f1',
@@ -250,13 +216,10 @@ export default function CardPayment() {
           borderRadius: '8px',
           fontWeight: '600',
           fontSize: '16px',
-          cursor: 'pointer',
-          transition: 'background-color 0.3s ease',
+          cursor: isProcessing ? 'not-allowed' : 'pointer',
         }}
-        onMouseOver={(e) => e.target.style.backgroundColor = '#4f46e5'}
-        onMouseOut={(e) => e.target.style.backgroundColor = '#6366f1'}
       >
-        Pay Now
+        {isProcessing ? 'Processing...' : 'Pay Now'}
       </button>
     </div>
   );

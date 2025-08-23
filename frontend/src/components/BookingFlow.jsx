@@ -32,6 +32,65 @@ export default function BookingFlow() {
     paymentStatus,
   } = useBooking();
 
+  // Validate and update booking details in local storage
+  const validateBookingDetails = () => {
+    const { address, phone, date, time } = bookingDetails;
+    if (!address || !phone || !date || !time) {
+      alert('Please complete all the booking details.');
+      return false;
+    }
+    localStorage.setItem('bookingData', JSON.stringify(bookingDetails));  // Update localStorage with valid details
+    return true;
+  };
+
+  // Handle moving to next step
+  const handleNext = () => {
+    if (currentStep === 1 && !validateBookingDetails()) return;  // Validate before moving to the next step
+    if (currentStep < 4) setCurrentStep(currentStep + 1);
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  const handleBookingConfirm = async () => {
+    const bookingData = {
+      userId: user.id,
+      serviceName: service.name,
+      date: bookingDetails.date,
+      time: bookingDetails.time,
+      address: bookingDetails.address,
+      phone: bookingDetails.phone,
+      instructions: bookingDetails.instructions,
+      paymentMethod: bookingDetails.paymentMethod,
+      paymentDetails: paymentDetails,  // Updated to pass full payment details
+      totalPrice: service.price, // Assuming price is from the service data
+    };
+
+    try {
+      const response = await axios.post(`${apiUrl}/api/bookings/create`, bookingData, { withCredentials: true });
+      
+      if (response.data.success) {
+        const userConfirmed = window.confirm('Do you want to confirm the booking?');
+
+        if (userConfirmed) {
+          const bookingId = response.data.booking._id;
+          const confirmedResponse = await axios.get(`${apiUrl}/api/bookings/confirm/${bookingId}`, { withCredentials: true });
+          setConfirmedBooking(confirmedResponse.data.booking);
+          setPaymentStatus('confirmed');
+          setCurrentStep(4);  // Go to confirmation step
+        } else {
+          navigate("/orders");
+        }
+      } else {
+        alert('Booking failed!');
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert('There was an error confirming your booking.');
+    }
+  };
+
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user'));
     if (!userData) {
@@ -64,55 +123,6 @@ export default function BookingFlow() {
     };
     fetchServiceData();
   }, [id, location.pathname]);
-
-  const storedBookingData = JSON.parse(localStorage.getItem("bookingData")); 
-  const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
-
-  const handleNext = () => {
-    if (currentStep < 4) setCurrentStep(currentStep + 1);
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
-  };
-
-  const handleBookingConfirm = async () => {
-    const bookingData = {
-      userId: user.id,
-      serviceName: service.name,
-      date: bookingDetails.date,
-      time: bookingDetails.time,
-      address: bookingDetails.address,
-      phone: bookingDetails.phone,
-      instructions: bookingDetails.instructions,
-      paymentMethod: bookingDetails.paymentMethod,
-      paymentDetails: paymentDetails,  // Updated to pass full payment details
-      totalPrice: totalPrice // Assuming price is from the service data
-    };
-
-    try {
-      const response = await axios.post(`${apiUrl}/api/bookings/create`, bookingData, { withCredentials: true });
-      
-      if (response.data.success) {
-        const userConfirmed = window.confirm('Do you want to confirm the booking?');
-
-        if (userConfirmed) {
-          const bookingId = response.data.booking._id;
-          const confirmedResponse = await axios.get(`${apiUrl}/api/bookings/confirm/${bookingId}`, { withCredentials: true });
-          setConfirmedBooking(confirmedResponse.data.booking);
-          setPaymentStatus('confirmed');
-          setCurrentStep(4);  // Go to confirmation step
-        } else {
-          navigate("/orders");
-        }
-      } else {
-        alert('Booking failed!');
-      }
-    } catch (error) {
-      console.error('Booking error:', error);
-      alert('There was an error confirming your booking.');
-    }
-  };
 
   if (!service) {
     return (
@@ -192,10 +202,11 @@ export default function BookingFlow() {
               </button>
               <button
                 className="btn btn-primary"
-                onClick={currentStep === 3 ? handleBookingConfirm : handleNext}
+                onClick={currentStep === 3 && paymentStatus === 'confirmed' ? handleBookingConfirm : handleNext}
                 style={{ padding: '12px 24px' }}
+                disabled={currentStep === 3 && paymentStatus !== 'confirmed'}
               >
-                {currentStep === 3 ? 'Confirm Booking' : 'Next'}
+                {currentStep === 3 && paymentStatus === 'confirmed' ? 'Confirm Booking' : 'Next'}
               </button>
             </div>
           )}
