@@ -12,6 +12,6 @@ router.get('/confirm/:bookingId', confirmBooking);
 router.get('/user/:userId', getUserBookings);
 router.patch('/update/:id', changeBookingStatus);
 router.get('/tracking/:id', getTrackingData);
-router.get('/api/payment', handlePayment);
+router.post('/api/payment', handlePayment);
 
 module.exports = router;
