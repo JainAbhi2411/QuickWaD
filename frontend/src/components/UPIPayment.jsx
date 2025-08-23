@@ -10,11 +10,6 @@ const validateUPI = (upiId) => {
   return regex.test(upiId);
 };
 
-// Simulated QR code generation URL (replace with actual payment gateway)
-const generatePaymentQR = (upiId, amount) => {
-  return `https://example.com/pay?upiId=${upiId}&amount=${amount}`;
-};
-
 const UPIApps = [
   { name: 'Google Pay', icon: 'https://cdn.worldvectorlogo.com/logos/google-pay-1.svg' },
   { name: 'PhonePe', icon: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/phonepe-icon.png' },
@@ -26,6 +21,7 @@ export default function UPIPayment() {
   const [upiIdError, setUpiIdError] = useState('');
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [qrCodeGenerated, setQrCodeGenerated] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upiId');
@@ -61,7 +57,7 @@ export default function UPIPayment() {
       },{withCredentials : true});
 
       if (response.data.success) {
-        setQrCode(response.data.qrCode); // Set the QR code URL from backend
+        setQrCodeGenerated(response.data.qrCode); // Set the QR code URL from backend
         setPaymentLink(response.data.paymentLink); // Set the payment link
         setPaymentStatus('QR Code Generated. Scan to Pay!');
       } else {

@@ -51,7 +51,6 @@ exports.createPaymentLink = async (req, res) => {
       receipt: `receipt_${new Date().getTime()}`,
       payment_capture: 1,
       description: 'Service Payment',
-      customer_email: customerEmail,
       customer_contact: customerPhone,
       customer_name: customerName,
       method: 'upi', // UPI payment method
@@ -66,7 +65,7 @@ exports.createPaymentLink = async (req, res) => {
     // Send back the QR code and order ID
     res.json({
       success: true,
-      paymentLink: `upi://pay?pa=${process.env.MERCHANT_UPI_ID}&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service Payment&am=${totalPrice}&cu=INR`,
+      paymentLink: `upi://pay?pa=OKEsn0BIWLyqrW&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service Payment&am=${totalPrice}&cu=INR`,
       qrCode,
     });
   } catch (error) {
