@@ -27,7 +27,8 @@ export default function UPIPayment() {
   const [timer, setTimer] = useState(0);
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upiId');
-  const totalAmount = 500; // Example: replace with dynamic amount from booking
+  const storedBookingData = JSON.parse(localStorage.getItem('bookingData'));
+  const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
 
   // Handle UPI ID change
   const handleUPIChange = (e) => {
@@ -74,7 +75,7 @@ export default function UPIPayment() {
         paymentDetails: {
           upiId: paymentDetails.upiId
         },
-        totalPrice: totalAmount, // Send total amount for payment
+        totalPrice: totalPrice, // Send total amount for payment
       });
 
       // Handle success or failure based on backend response

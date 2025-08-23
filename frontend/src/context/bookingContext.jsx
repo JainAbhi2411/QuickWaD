@@ -33,6 +33,8 @@ export const BookingProvider = ({ children }) => {
     { id: 4, title: 'Confirmation', description: 'Booking confirmed' }
   ];
 
+  
+
   return (
     <BookingContext.Provider
       value={{

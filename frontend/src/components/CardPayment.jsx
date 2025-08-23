@@ -38,6 +38,10 @@ export default function CardPayment() {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const storedBookingData = JSON.parse(localStorage.getItem('bookingData'));
+  const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
+
+  
 
   const handleCardNumberChange = (e) => {
     const cardNumber = e.target.value.replace(/\s/g, ''); // Remove spaces for validation
@@ -85,7 +89,7 @@ export default function CardPayment() {
         const response = await axios.post('/api/payment', {
           paymentMethod: 'card',  // Specify payment method
           paymentDetails,  // Send all payment details
-          totalPrice: paymentDetails.totalPrice,  // Assuming totalPrice is part of paymentDetails
+          totalPrice: totalPrice,  // Assuming totalPrice is part of paymentDetails
         });
 
         if (response.data.paymentStatus === 'confirmed') {

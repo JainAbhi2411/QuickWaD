@@ -17,6 +17,8 @@ export default function CashAfterService() {
 
     return () => clearInterval(timer); // Clean up the interval
   }, []);
+  const storedBookingData = JSON.parse(localStorage.getItem('bookingData'));
+  const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
 
   const handleConfirmPayment = async () => {
     setIsConfirmed(true);
@@ -33,7 +35,7 @@ export default function CashAfterService() {
         paymentDetails: {
           ...paymentDetails, // Send the payment details (e.g., address, phone, etc.)
         },
-        totalPrice: 500, // Assuming static price for now, replace with dynamic amount
+        totalPrice: totalPrice, // Assuming static price for now, replace with dynamic amount
       });
 
       if (response.data.paymentStatus === 'confirmed') {
