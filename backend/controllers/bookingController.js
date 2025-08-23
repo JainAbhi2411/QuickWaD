@@ -41,7 +41,7 @@ const mockCashPayment = () => {
 
 // API to create payment link and generate QR code for UPI payment
 exports.createPaymentLink = async (req, res) => {
-  const { totalPrice, customerName, customerEmail, customerPhone } = req.body;
+  const { totalPrice} = req.body;
 
   try {
     // Prepare the Razorpay order options
@@ -56,14 +56,14 @@ exports.createPaymentLink = async (req, res) => {
 
     // Create a Razorpay order
     const order = await razorpay.orders.create(options);
-
+    const paymentLink = `upi://pay?pa=OKEsn0BIWLyqrW&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service%20Payment&am=${totalPrice}&cu=INR`;
     // Generate the UPI QR code for the payment
-    const qrCode = `https://api.qrserver.com/v1/create-qr-code/?data=upi://pay?pa=OKEsn0BIWLyqrW&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service Payment&am=${totalPrice}&cu=INR&size=150x150`;
+    const qrCode = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(paymentLink)}&size=150x150`;
 
     // Send back the QR code and order ID
     res.json({
       success: true,
-      paymentLink: `upi://pay?pa=OKEsn0BIWLyqrW&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service Payment&am=${totalPrice}&cu=INR`,
+      paymentLink:
       qrCode,
     });
   } catch (error) {

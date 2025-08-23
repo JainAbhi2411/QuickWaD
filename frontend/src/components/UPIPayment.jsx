@@ -19,6 +19,7 @@ const UPIApps = [
 export default function UPIPayment() {
   const { paymentDetails, setPaymentDetails, setPaymentStatus,paymentStatus } = useBooking();
   const [upiIdError, setUpiIdError] = useState('');
+  const [paymentLink, setPaymentLink] = useState('');
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [qrCodeGenerated, setQrCodeGenerated] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -170,9 +171,8 @@ export default function UPIPayment() {
           {qrCodeGenerated ? (
             <>
               <h4 style={{ fontWeight: '600' }}>Scan this QR code with your UPI app</h4>
-              <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?data=${generatePaymentQR(paymentDetails.upiId, totalPrice)}&size=150x150`}
-                alt="UPI QR Code"
+              
+                <img src={qrCodeGenerated} alt="UPI Payment QR Code" 
                 style={{ width: '150px', height: '150px', objectFit: 'contain', marginBottom: '20px' }}
               />
               <div style={{ fontWeight: '600' }}>QR Code expires in {timer} seconds</div>
@@ -199,6 +199,11 @@ export default function UPIPayment() {
               </p>
             </div>
           )}
+          {paymentLink && (
+        <div>
+          <p>Or, use the following payment link: <a href={paymentLink} target="_blank" rel="noopener noreferrer">Pay Now</a></p>
+        </div>
+      )}
         </div>
       )}
 
