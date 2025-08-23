@@ -204,6 +204,8 @@ export default function CardPayment() {
         </div>
       </div>
 
+      {/* Cardholder Name */} <input type="text" value={paymentDetails.cardName} onChange={(e) => setPaymentDetails({ ...paymentDetails, cardName: e.target.value })} placeholder="Cardholder Name" style={{ padding: '15px', fontSize: '16px', width: '100%', borderRadius: '8px', border: errors.cardName ? '2px solid red' : '2px solid #e5e7eb', fontWeight: '600', letterSpacing: '1px', }} /> {errors.cardName && <div style={{ color: 'red', fontSize: '12px' }}>{errors.cardName}</div>} {/* Billing Address */} <textarea value={paymentDetails.billingAddress} onChange={(e) => setPaymentDetails({ ...paymentDetails, billingAddress: e.target.value })} placeholder="Billing Address" style={{ padding: '15px', fontSize: '16px', width: '100%', height: '100px', borderRadius: '8px', border: errors.billingAddress ? '2px solid red' : '2px solid #e5e7eb', fontWeight: '600', letterSpacing: '1px', }} /> {errors.billingAddress && <div style={{ color: 'red', fontSize: '12px' }}>{errors.billingAddress}</div>}
+
       {/* Submit Payment */}
       <button
         onClick={handleSubmit}
