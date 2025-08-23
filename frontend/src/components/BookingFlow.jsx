@@ -32,10 +32,10 @@ export default function BookingFlow() {
     paymentStatus,
   } = useBooking();
 
-  // Validate and update booking details in local storage
+  // Validate and update booking details in local storage // Validate and update booking details in local storage
   const validateBookingDetails = () => {
     const { address, phone, date, time } = bookingDetails;
-    if (!address || !phone || !date || !time) {
+    if ((currentStep === 1 && (!date || !time)) || (currentStep > 1 && (!address || !phone || !date || !time))) {
       alert('Please complete all the booking details.');
       return false;
     }
