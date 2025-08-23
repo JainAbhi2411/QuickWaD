@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useBooking } from '../context/bookingContext';
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 export default function CashAfterService() {
   const { paymentDetails, setPaymentStatus } = useBooking();
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -30,7 +31,7 @@ export default function CashAfterService() {
     // Simulate sending payment request to the backend
     setIsProcessing(true);
     try {
-      const response = await axios.post('/api/payment', {
+      const response = await axios.post(`${apiUrl}/api/payment`, {
         paymentMethod: 'cash', // Specify payment method as cash
         paymentDetails: {
           ...paymentDetails, // Send the payment details (e.g., address, phone, etc.)

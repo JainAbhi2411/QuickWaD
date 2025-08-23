@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useBooking } from '../context/bookingContext';
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Card Type Detection using regex for simplicity
 const getCardType = (cardNumber) => {
@@ -86,7 +87,7 @@ export default function CardPayment() {
       setIsProcessing(true);
       try {
         // Send payment details to the backend for processing (all methods using the same endpoint)
-        const response = await axios.post('/api/payment', {
+        const response = await axios.post(`${apiUrl}/api/payment`, {
           paymentMethod: 'card',  // Specify payment method
           paymentDetails,  // Send all payment details
           totalPrice: totalPrice,  // Assuming totalPrice is part of paymentDetails

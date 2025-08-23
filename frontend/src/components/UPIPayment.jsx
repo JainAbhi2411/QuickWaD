@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useBooking } from '../context/bookingContext';
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 // Helper function to validate UPI ID
 const validateUPI = (upiId) => {
   const regex = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+$/;
@@ -70,7 +72,7 @@ export default function UPIPayment() {
 
     try {
       // Send payment details to the backend
-      const response = await axios.post('/api/payment', {
+      const response = await axios.post(`${apiUrl}/api/payment`, {
         paymentMethod: 'upi', // Specify payment method
         paymentDetails: {
           upiId: paymentDetails.upiId
