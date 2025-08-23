@@ -32,20 +32,29 @@ export default function BookingFlow() {
     paymentStatus,
   } = useBooking();
 
-  // Validate and update booking details in local storage // Validate and update booking details in local storage
+ // Validate and update booking details in local storage
   const validateBookingDetails = () => {
     const { address, phone, date, time } = bookingDetails;
-    if ((currentStep === 1 && (!date || !time)) || (currentStep > 1 && (!address || !phone || !date || !time))) {
-      alert('Please complete all the booking details.');
+    
+    // If we're in the first step, check if date and time are filled
+    if (currentStep === 1 && (!date || !time)) {
+      alert('Please complete the schedule details (date and time).');
       return false;
     }
+
+    // For subsequent steps, validate that address and phone are filled
+    if (currentStep > 1 && (!address || !phone || !date || !time)) {
+      alert('Please complete all the booking details (address, phone, date, and time).');
+      return false;
+    }
+
     localStorage.setItem('bookingData', JSON.stringify(bookingDetails));  // Update localStorage with valid details
     return true;
   };
 
   // Handle moving to next step
   const handleNext = () => {
-    if (currentStep === 1 && !validateBookingDetails()) return;  // Validate before moving to the next step
+    if (!validateBookingDetails()) return;  // Validate before moving to the next step
     if (currentStep < 4) setCurrentStep(currentStep + 1);
   };
 
