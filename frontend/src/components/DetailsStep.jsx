@@ -25,7 +25,7 @@ export default function DetailsStep() {
             fontSize: '16px',
             resize: 'vertical'
           }}
-          required: true
+          
         />
       </div>
 
