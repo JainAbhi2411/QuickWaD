@@ -93,6 +93,8 @@ export default function CardPayment() {
           totalPrice: totalPrice,  // Assuming totalPrice is part of paymentDetails
         },{withCredentials: true});
 
+        console.log(response.data);
+
         if (response.data.paymentStatus === 'confirmed') {
           // Payment is confirmed, update paymentStatus in the context
           alert('Payment successful!');
