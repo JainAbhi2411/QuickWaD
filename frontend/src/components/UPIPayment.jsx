@@ -78,7 +78,7 @@ export default function UPIPayment() {
           upiId: paymentDetails.upiId
         },
         totalPrice: totalPrice, // Send total amount for payment
-      });
+      },{withCredentials : true});
 
       // Handle success or failure based on backend response
       if (response.data.paymentStatus === 'confirmed') {

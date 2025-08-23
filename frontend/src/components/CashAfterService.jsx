@@ -37,7 +37,7 @@ export default function CashAfterService() {
           ...paymentDetails, // Send the payment details (e.g., address, phone, etc.)
         },
         totalPrice: totalPrice, // Assuming static price for now, replace with dynamic amount
-      });
+      }, {withCredentials : true});
 
       if (response.data.paymentStatus === 'confirmed') {
         setPaymentStatus('confirmed'); // Payment status is confirmed once the service is completed

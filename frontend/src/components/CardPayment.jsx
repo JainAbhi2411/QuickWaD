@@ -91,7 +91,7 @@ export default function CardPayment() {
           paymentMethod: 'card',  // Specify payment method
           paymentDetails,  // Send all payment details
           totalPrice: totalPrice,  // Assuming totalPrice is part of paymentDetails
-        });
+        },{withCredentials: true});
 
         if (response.data.paymentStatus === 'confirmed') {
           // Payment is confirmed, update paymentStatus in the context
