@@ -160,7 +160,7 @@ export default function UPIPayment() {
             <>
               <h4 style={{ fontWeight: '600' }}>Scan this QR code with your UPI app</h4>
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?data=${generatePaymentQR(paymentDetails.upiId, totalAmount)}&size=150x150`}
+                src={`https://api.qrserver.com/v1/create-qr-code/?data=${generatePaymentQR(paymentDetails.upiId, totalPrice)}&size=150x150`}
                 alt="UPI QR Code"
                 style={{ width: '150px', height: '150px', objectFit: 'contain', marginBottom: '20px' }}
               />
@@ -195,7 +195,7 @@ export default function UPIPayment() {
       <div style={{ marginTop: '20px' }}>
         <h3 style={{ fontWeight: '600' }}>Payment Details</h3>
         <p><strong>UPI ID:</strong> {paymentDetails.upiId}</p>
-        <p><strong>Amount:</strong> ₹{totalAmount}</p>
+        <p><strong>Amount:</strong> ₹{totalPrice}</p>
         <p><strong>Description:</strong> Service Booking Payment</p>
       </div>
 
