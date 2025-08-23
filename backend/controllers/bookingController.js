@@ -56,14 +56,14 @@ exports.createPaymentLink = async (req, res) => {
 
     // Create a Razorpay order
     const order = await razorpay.orders.create(options);
-    const paymentLink = `upi://pay?pa=OKEsn0BIWLyqrW&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service%20Payment&am=${totalPrice}&cu=INR`;
+    const paymentLink = `upi://pay?pa=7374035907@airtel&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service%20Payment&am=${totalPrice}&cu=INR`;
     // Generate the UPI QR code for the payment
     const qrCode = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(paymentLink)}&size=150x150`;
 
     // Send back the QR code and order ID
     res.json({
       success: true,
-      paymentLink:
+      paymentLink,
       qrCode,
     });
   } catch (error) {
