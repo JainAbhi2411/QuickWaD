@@ -20,7 +20,7 @@ const UPIApps = [
 ];
 
 export default function UPIPayment() {
-  const { paymentDetails, setPaymentDetails, setPaymentStatus } = useBooking();
+  const { paymentDetails, setPaymentDetails, setPaymentStatus,paymentStatus } = useBooking();
   const [upiIdError, setUpiIdError] = useState('');
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [qrCodeGenerated, setQrCodeGenerated] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useBooking } from '../context/bookingContext';
 import CardPayment from './CardPayment';
 import UPIPayment from './UPIPayment';
@@ -10,81 +10,10 @@ export default function PaymentStep() {
   const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
 
   const [paymentMethod, setPaymentMethod] = useState(bookingDetails.paymentMethod || 'card');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentErrors, setPaymentErrors] = useState({});
-
-  // Helper function to validate the payment details
-  const validatePaymentDetails = () => {
-    let errors = {};
-
-    if (paymentMethod === 'card') {
-      if (!paymentDetails.cardNumber || paymentDetails.cardNumber.length < 19) {
-        errors.cardNumber = 'Card number must be 16 digits.';
-      }
-      if (!paymentDetails.expiryDate || paymentDetails.expiryDate.length !== 5) {
-        errors.expiryDate = 'Please enter a valid expiry date (MM/YY).';
-      }
-      if (!paymentDetails.cvv || paymentDetails.cvv.length < 3) {
-        errors.cvv = 'Please enter a valid CVV.';
-      }
-      if (!paymentDetails.cardName) {
-        errors.cardName = 'Cardholder name is required.';
-      }
-    } else if (paymentMethod === 'upi') {
-      if (!paymentDetails.upiId || !validateUPI(paymentDetails.upiId)) {
-        errors.upiId = 'Please enter a valid UPI ID.';
-      }
-    }
-
-    setPaymentErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  // Validate UPI ID format
-  const validateUPI = (upiId) => {
-    const regex = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+$/;
-    return regex.test(upiId);
-  };
-
-  const handlePaymentSubmit = async () => {
-    if (!validatePaymentDetails()) {
-      return;
-    }
-
-    setIsProcessing(true);
-    setPaymentErrors({});  // Reset any existing errors
-
-    try {
-      // Here you would process the payment based on the selected method
-      if (paymentMethod === 'card') {
-        // Call your API to process the card payment
-        console.log('Processing card payment...');
-      } else if (paymentMethod === 'upi') {
-        // Call your API to process UPI payment
-        console.log('Processing UPI payment...');
-      } else if (paymentMethod === 'cas') {
-        // Handle cash payment after service
-        console.log('Cash payment selected...');
-      }
-
-      // Simulate a successful payment confirmation after processing
-      setTimeout(() => {
-        setIsProcessing(false);
-        alert('Payment successful!');
-        // Proceed to confirmation step
-      }, 2000);
-    } catch (error) {
-      setIsProcessing(false);
-      console.error('Payment error:', error);
-      alert('There was an issue processing your payment.');
-    }
-  };
 
   return (
     <div>
-      <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: '600' }}>
-        Payment Information
-      </h2>
+      <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: '600' }}>Payment Information</h2>
 
       {/* Order Summary */}
       <div style={{ background: '#f9fafb', padding: '20px', borderRadius: '8px', marginBottom: '25px' }}>
@@ -145,39 +74,9 @@ export default function PaymentStep() {
       </div>
 
       {/* Render the Payment Method Components */}
-      {paymentMethod === 'card' && <CardPayment paymentErrors={paymentErrors} />}
-      {paymentMethod === 'upi' && <UPIPayment paymentErrors={paymentErrors} />}
-      {paymentMethod === 'cas' && <CashAfterService paymentErrors={paymentErrors} />}
-
-      {/* Submit Payment */}
-      <div style={{ marginTop: '30px' }}>
-        <button
-          onClick={handlePaymentSubmit}
-          disabled={isProcessing}
-          style={{
-            padding: '15px 30px',
-            backgroundColor: isProcessing ? '#d1d5db' : '#6366f1',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontWeight: '600',
-            fontSize: '16px',
-            cursor: isProcessing ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.3s ease',
-          }}
-        >
-          {isProcessing ? 'Processing...' : 'Confirm Payment'}
-        </button>
-      </div>
-
-      {/* Display Error Messages */}
-      {Object.keys(paymentErrors).length > 0 && (
-        <div style={{ marginTop: '15px', color: 'red' }}>
-          {Object.values(paymentErrors).map((error, index) => (
-            <div key={index}>{error}</div>
-          ))}
-        </div>
-      )}
+      {paymentMethod === 'card' && <CardPayment />}
+      {paymentMethod === 'upi' && <UPIPayment />}
+      {paymentMethod === 'cas' && <CashAfterService />}
     </div>
   );
 }
