@@ -34,6 +34,7 @@ const mockCashPayment = () => {
 // Create a new route for handling payment requests
 exports.handlePayment = async (req, res) => {
   const { paymentMethod, paymentDetails, totalPrice } = req.body;
+  const { bookingId } = req.params;
 
   try {
     let paymentResponse;
