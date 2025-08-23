@@ -48,8 +48,19 @@ export default function BookingFlow() {
       return false;
     }
 
-    localStorage.setItem('bookingData', JSON.stringify(bookingDetails));  // Update localStorage with valid details
-    return true;
+    // Retrieve the existing bookingData from localStorage
+  const storedBookingData = JSON.parse(localStorage.getItem('bookingData')) || {};
+
+  // Merge the new booking details with the stored data
+  const updatedBookingData = { 
+    ...storedBookingData, // Retain existing data
+    ...bookingDetails     // Update with new booking details
+  };
+
+  // Update localStorage with the merged data
+  localStorage.setItem('bookingData', JSON.stringify(updatedBookingData));
+
+  return true;
   };
 
   // Handle moving to next step
