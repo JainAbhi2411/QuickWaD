@@ -53,20 +53,27 @@ exports.handlePayment = async (req, res) => {
       paymentResponse = mockCashPayment();
     }
 
-    // Update the booking with payment status based on response
-    if (paymentResponse.status === 'success' || paymentResponse.status === 'pending') {
-      // Confirm the payment status if successful
-      res.status(200).json({ paymentStatus: 'confirmed', message: paymentResponse.message });
+   // Find the booking by ID
+    const booking = await Booking.findById(bookingId);
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    // If payment is successful, update the paymentStatus in the booking
+    if (paymentResponse.status === 'success') {
+      booking.paymentStatus = 'confirmed';  // Update the paymentStatus to confirmed
+      booking.status = 'pending';  // Set status to pending, awaiting confirmation
+      await booking.save();  // Save the updated booking
+      return res.status(200).json({ paymentStatus: 'confirmed', message: paymentResponse.message });
     } else {
-      // Mark as failed if the payment is unsuccessful
-      res.status(400).json({ paymentStatus: 'failed', message: paymentResponse.message });
+      // Payment failed
+      booking.paymentStatus = 'failed';
+      await booking.save();
+      return res.status(400).json({ paymentStatus: 'failed', message: paymentResponse.message });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Payment processing error', error });
   }
 };
-
 // Create Booking with UPI, Card, or Cash After Service
 exports.createBooking = async (req, res) => {
   const {

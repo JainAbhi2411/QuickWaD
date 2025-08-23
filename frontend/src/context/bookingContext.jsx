@@ -25,6 +25,7 @@ export const BookingProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [service, setService] = useState(null);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+  const [paymentStatus,setPaymentStatus] = useState('pending');
 
   const steps = [
     { id: 1, title: 'Schedule', description: 'Choose date and time' },
@@ -50,7 +51,9 @@ export const BookingProvider = ({ children }) => {
         setService,
         confirmedBooking,
         setConfirmedBooking,
-        steps
+        steps,
+        paymentStatus,
+        setPaymentStatus
       }}
     >
       {children}
