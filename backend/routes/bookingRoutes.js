@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createBooking, confirmBooking, getUserBookings , changeBookingStatus,getTrackingData ,handlePayment } = require('../controllers/bookingController');
+const { createBooking, confirmBooking, getUserBookings , changeBookingStatus,getTrackingData ,handlePayment ,createPaymentLink} = require('../controllers/bookingController');
 
 // Route for creating a new booking
 router.post('/create', createBooking);
@@ -13,5 +13,6 @@ router.get('/user/:userId', getUserBookings);
 router.patch('/update/:id', changeBookingStatus);
 router.get('/tracking/:id', getTrackingData);
 router.post('/payment', handlePayment);
+router.post('/payment-link', createPaymentLink);
 
 module.exports = router;

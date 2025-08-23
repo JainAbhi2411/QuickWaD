@@ -32,6 +32,9 @@ export default function UPIPayment() {
   const storedBookingData = JSON.parse(localStorage.getItem('bookingData'));
   const { serviceId, totalPrice, addons, quantity } = storedBookingData || {};
 
+  const userdata = JSON.parse(localStorage.getItem('user'));
+  const { name, email, phone } = userdata || {};
+
   // Handle UPI ID change
   const handleUPIChange = (e) => {
     const upiId = e.target.value;
@@ -44,20 +47,32 @@ export default function UPIPayment() {
   };
 
   // Handle QR Code Generation (for scanning)
-  const generateQRCode = () => {
-    setQrCodeGenerated(true);
-    setTimer(30); // 30-second timer for QR code expiration
+  const generateQRCode = async () => {
+    setIsProcessing(true);
+    setPaymentStatus('');
 
-    const countdown = setInterval(() => {
-      setTimer((prev) => {
-        if (prev === 1) {
-          clearInterval(countdown);
-          setQrCodeGenerated(false); // Reset QR code if time runs out
-          setShowTimeoutWarning(true); // Show timeout warning
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    try {
+      const response = await axios.post(`${apiUrl}/api/bookings/payment-link`, {
+        totalPrice: totalPrice, // Example amount in INR
+        
+        customerName: name, // Replace with dynamic data
+        customerEmail: email, // Replace with dynamic data
+        customerPhone: phone, // Replace with dynamic data
+      },{withCredentials : true});
+
+      if (response.data.success) {
+        setQrCode(response.data.qrCode); // Set the QR code URL from backend
+        setPaymentLink(response.data.paymentLink); // Set the payment link
+        setPaymentStatus('QR Code Generated. Scan to Pay!');
+      } else {
+        setPaymentStatus('Failed to generate payment QR.');
+      }
+    } catch (error) {
+      console.error('Error generating payment link:', error);
+      setPaymentStatus('Error generating payment link.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Handle UPI Payment Processing

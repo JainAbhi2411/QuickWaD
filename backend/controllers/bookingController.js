@@ -4,8 +4,14 @@ const ExpertService = require('../models/ExpertService');
 const OnlineService = require('../models/OnlineService');
 const PremiumService = require('../models/PremiumService');
 const ServiceCategory = require('../models/serviceCategory');
+const Razorpay = require('razorpay');
 
 let paymentStatus = 'pending';
+
+const razorpay = new Razorpay({
+  key_id: 'rzp_test_R8sTgDyMaNcZpq',
+  key_secret: 'sma0lNFv0n1JbskNRfsH9s3Y',
+});
 
 // Mock payment gateway simulation for UPI, Cash, and Card methods
 const mockUPIPayment = async (upiId, totalPrice) => {
@@ -32,6 +38,43 @@ const mockCashPayment = () => {
   // Simulate a pending cash payment
   return { status: 'pending', message: 'Cash payment pending. To be paid after service completion.' };
 };
+
+// API to create payment link and generate QR code for UPI payment
+exports.createPaymentLink = async (req, res) => {
+  const { totalPrice, customerName, customerEmail, customerPhone } = req.body;
+
+  try {
+    // Prepare the Razorpay order options
+    const options = {
+      amount: totalPrice * 100, // Convert to smallest unit (e.g., paise)
+      currency: 'INR',
+      receipt: `receipt_${new Date().getTime()}`,
+      payment_capture: 1,
+      description: 'Service Payment',
+      customer_email: customerEmail,
+      customer_contact: customerPhone,
+      customer_name: customerName,
+      method: 'upi', // UPI payment method
+    };
+
+    // Create a Razorpay order
+    const order = await razorpay.orders.create(options);
+
+    // Generate the UPI QR code for the payment
+    const qrCode = `https://api.qrserver.com/v1/create-qr-code/?data=upi://pay?pa=OKEsn0BIWLyqrW&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service Payment&am=${totalPrice}&cu=INR&size=150x150`;
+
+    // Send back the QR code and order ID
+    res.json({
+      success: true,
+      paymentLink: `upi://pay?pa=${process.env.MERCHANT_UPI_ID}&pn=Merchant&mc=123456&tid=${order.id}&tr=${order.receipt}&tn=Service Payment&am=${totalPrice}&cu=INR`,
+      qrCode,
+    });
+  } catch (error) {
+    console.error('Error creating Razorpay order:', error);
+    res.status(500).json({ success: false, message: 'Failed to create payment link.' });
+  }
+};
+
 
 // Create a new route for handling payment requests
 exports.handlePayment = async (req, res) => {

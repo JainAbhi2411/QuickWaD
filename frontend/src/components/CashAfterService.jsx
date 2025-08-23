@@ -13,7 +13,7 @@ export default function CashAfterService() {
   useEffect(() => {
     // Simulate service status update (in a real-world app, this would be dynamic)
     const timer = setInterval(() => {
-      setServiceStatus('completed');
+      setServiceStatus('confirmed');
     }, 5000); // Simulating service completion after 5 seconds
 
     return () => clearInterval(timer); // Clean up the interval
@@ -65,8 +65,8 @@ export default function CashAfterService() {
 
       {/* Service Status */}
       <div style={{ marginBottom: '15px' }}>
-        <strong>Service Status:</strong> <span style={{ color: serviceStatus === 'completed' ? 'green' : 'orange' }}>
-          {serviceStatus === 'completed' ? 'Service Completed' : 'Service Pending'}
+        <strong>Service Status:</strong> <span style={{ color: serviceStatus === 'confirmed' ? 'green' : 'orange' }}>
+          {serviceStatus === 'confirmed' ? 'Service confirmed' : 'Service Pending'}
         </span>
       </div>
 
