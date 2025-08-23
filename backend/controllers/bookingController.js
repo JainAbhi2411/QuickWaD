@@ -5,6 +5,8 @@ const OnlineService = require('../models/OnlineService');
 const PremiumService = require('../models/PremiumService');
 const ServiceCategory = require('../models/serviceCategory');
 
+let paymentStatus = 'pending';
+
 // Mock payment gateway simulation for UPI, Cash, and Card methods
 const mockUPIPayment = async (upiId, totalPrice) => {
   if (upiId.includes('@upi')) {
@@ -55,6 +57,7 @@ exports.handlePayment = async (req, res) => {
 
     // Update the booking with payment status based on response
     if (paymentResponse.status === 'success' || paymentResponse.status === 'pending') {
+      paymentStatus = 'confirmed';
       // Confirm the payment status if successful
       res.status(200).json({ paymentStatus: 'confirmed', message: paymentResponse.message });
     } else {
@@ -122,7 +125,7 @@ exports.createBooking = async (req, res) => {
       paymentDetails,
       totalPrice,
       status: 'pending', // Set default status to pending
-      paymentStatus: 'pending', // Default to pending if not paid
+      paymentStatus: paymentStatus, // Default to pending if not paid
     });
 
     // Save the booking to the database (we'll update paymentStatus later based on mock payment)
