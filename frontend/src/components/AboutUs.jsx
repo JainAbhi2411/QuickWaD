@@ -18,7 +18,7 @@ export default function AboutUs() {
         }}
       >
         <h1 style={{ fontSize: '42px', fontWeight: '700', marginBottom: '20px' }}>
-          About ServicePro
+          About QuickWad
         </h1>
         <p style={{ fontSize: '20px', maxWidth: '700px', margin: '0 auto', lineHeight: '1.6' }}>
           Revolutionizing how you book everyday services — fast, professional, and at your fingertips.
@@ -52,7 +52,7 @@ export default function AboutUs() {
             Who We Are
           </h2>
           <p style={{ fontSize: '17px', color: '#4b5563', lineHeight: '1.8', marginBottom: '25px' }}>
-            At <strong>ServicePro</strong>, we believe every home deserves professional care. From premium cleaning and appliance repairs to beauty and wellness services, our goal is to bring expertise to your doorstep.
+            At <strong>QuickWad</strong>, we believe every home deserves professional care. From premium cleaning and appliance repairs to beauty and wellness services, our goal is to bring expertise to your doorstep.
           </p>
           <p style={{ fontSize: '17px', color: '#4b5563', lineHeight: '1.8' }}>
             Trusted by thousands, we focus on safety, convenience, and quality. Our skilled partners are trained and verified to give you peace of mind — always.

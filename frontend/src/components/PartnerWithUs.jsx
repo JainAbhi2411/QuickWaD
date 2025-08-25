@@ -30,7 +30,7 @@ export default function PartnerWithUs() {
         {/* Hero Section */}
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
           <h1 style={{ fontSize: '42px', fontWeight: '700', color: '#111827' }}>
-            Partner With ServicePro
+            Partner With QuickWad
           </h1>
           <p style={{ fontSize: '18px', color: '#4b5563', marginTop: '10px' }}>
             Join our network of professionals and grow your career by serving thousands of customers across the country.

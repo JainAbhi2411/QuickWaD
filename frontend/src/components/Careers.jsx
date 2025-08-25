@@ -6,21 +6,21 @@ const openPositions = [
     location: 'Remote / Bengaluru',
     type: 'Full-time',
     experience: '2+ years',
-    applyEmail: 'hr@servicepro.com'
+    applyEmail: 'hr@QuickWad.com'
   },
   {
     title: 'Backend Developer (Node.js)',
     location: 'Remote / Hyderabad',
     type: 'Full-time',
     experience: '3+ years',
-    applyEmail: 'hr@servicepro.com'
+    applyEmail: 'hr@QuickWad.com'
   },
   {
     title: 'UI/UX Designer',
     location: 'Remote',
     type: 'Part-time',
     experience: '1+ year',
-    applyEmail: 'hr@servicepro.com'
+    applyEmail: 'hr@QuickWad.com'
   },
 ];
 
@@ -71,7 +71,7 @@ export default function Careers() {
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <h1 style={{ fontSize: '42px', fontWeight: '700', color: '#1f2937' }}>Careers at ServicePro</h1>
+          <h1 style={{ fontSize: '42px', fontWeight: '700', color: '#1f2937' }}>Careers at QuickWad</h1>
           <p style={{ fontSize: '18px', color: '#6b7280' }}>
             Explore opportunities to grow with us in tech and on-ground service roles.
           </p>

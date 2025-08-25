@@ -2,20 +2,20 @@ import React from 'react';
 
 const pressMentions = [
   {
-    title: "ServicePro Revolutionizes Home Services",
-    excerpt: "With over 100K users in its first year, ServicePro is redefining the future of on-demand home services in India.",
+    title: "QuickWad Revolutionizes Home Services",
+    excerpt: "With over 100K users in its first year, QuickWad is redefining the future of on-demand home services in India.",
     image: "https://images.unsplash.com/photo-1581092160613-5e7b6b8c3fdc",
     link: "https://example.com/article1"
   },
   {
     title: "Top 10 Startups to Watch in 2025",
-    excerpt: "ServicePro stands out with its AI-powered service matching and verified professionals.",
+    excerpt: "QuickWad stands out with its AI-powered service matching and verified professionals.",
     image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
     link: "https://example.com/article2"
   },
   {
     title: "Empowering Blue-Collar Workforce through Tech",
-    excerpt: "ServicePro has onboarded over 3,000 verified partners, enabling livelihood through tech access and training.",
+    excerpt: "QuickWad has onboarded over 3,000 verified partners, enabling livelihood through tech access and training.",
     image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
     link: "https://example.com/article3"
   },
@@ -36,7 +36,7 @@ export default function PressAndMedia() {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h1 style={{ fontSize: '38px', fontWeight: '700', color: '#1f2937' }}>Press & Media</h1>
           <p style={{ fontSize: '16px', color: '#6b7280' }}>
-            Read what the media is saying about ServicePro and our journey of impact.
+            Read what the media is saying about QuickWad and our journey of impact.
           </p>
         </div>
 
@@ -86,7 +86,7 @@ export default function PressAndMedia() {
             Press Inquiries & Brand Assets
           </h3>
           <p style={{ fontSize: '15px', color: '#4b5563', marginBottom: '20px' }}>
-            For interviews, quotes, or brand resources, contact us at <strong>media@servicepro.in</strong>
+            For interviews, quotes, or brand resources, contact us at <strong>media@QuickWad.in</strong>
           </p>
           <button style={{
             background: '#6366f1',

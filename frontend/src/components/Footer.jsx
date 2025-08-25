@@ -325,7 +325,7 @@ export default function Footer() {
           gap: '20px' 
         }}>
           <div style={{ color: '#d1d5db', fontSize: '14px' }}>
-            © 2024 ServicePro. All rights reserved. | Built with ❤️ for better homes
+            © 2024 QuickWad. All rights reserved. | Built with ❤️ for better homes
           </div>
           <div style={{ 
             display: 'flex', 

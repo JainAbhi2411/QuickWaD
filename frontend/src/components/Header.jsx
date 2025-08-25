@@ -314,7 +314,7 @@ export default function Header() {
       {showLoginModal && <Modal type="login" formData={loginForm} setFormData={setLoginForm} handleSubmit={handleLogin} setShowModal={setShowLoginModal} modalTitle="Welcome Back!" toggleModal={() => setShowSignupModal(true)} />}
       
       {/* Signup Modal */}
-      {showSignupModal && <Modal type="signup" formData={signupForm} setFormData={setSignupForm} handleSubmit={handleSignup} setShowModal={setShowSignupModal} modalTitle="Join ServicePro" toggleModal={() => setShowLoginModal(true)} />}
+      {showSignupModal && <Modal type="signup" formData={signupForm} setFormData={setSignupForm} handleSubmit={handleSignup} setShowModal={setShowSignupModal} modalTitle="Join QuickWad" toggleModal={() => setShowLoginModal(true)} />}
     </>
   );
 }

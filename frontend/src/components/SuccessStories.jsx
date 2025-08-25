@@ -5,19 +5,19 @@ const userStories = [
     name: 'Ritika Sharma',
     role: 'Homeowner, Delhi',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA_dNKmk5idziwPzIR--pk5zHsTMkKcyGgBA&s',
-    story: 'I was amazed by the professionalism of ServicePro’s deep cleaning team. My home felt like a 5-star suite afterward!',
+    story: 'I was amazed by the professionalism of QuickWad’s deep cleaning team. My home felt like a 5-star suite afterward!',
   },
   {
     name: 'Amit Singh',
     role: 'Electrician Partner, Bengaluru',
     image: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e',
-    story: 'Joining ServicePro helped me find consistent work and grow my income 2x in just 6 months.',
+    story: 'Joining QuickWad helped me find consistent work and grow my income 2x in just 6 months.',
   },
   {
     name: 'Priya Nair',
     role: 'Working Mom, Mumbai',
     image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d',
-    story: 'Thanks to ServicePro, I no longer stress about last-minute repairs or finding trusted service people.',
+    story: 'Thanks to QuickWad, I no longer stress about last-minute repairs or finding trusted service people.',
   },
 ];
 
@@ -50,7 +50,7 @@ export default function SuccessStories() {
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
           <h1 style={{ fontSize: '42px', fontWeight: '700', color: '#111827' }}>Success Stories</h1>
           <p style={{ fontSize: '18px', color: '#6b7280' }}>
-            Inspiring stories from our customers, professionals, and the growth of ServicePro itself.
+            Inspiring stories from our customers, professionals, and the growth of QuickWad itself.
           </p>
         </div>
 

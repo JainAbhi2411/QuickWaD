@@ -19,7 +19,7 @@ export default function ServiceDetails() {
     // Fetch the service details from the backend API
     const fetchServiceDetails = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/services/${id}`);
+        const response = await axios.get(`${apiUrl}/api/services/${id}`, { withCredentials: true });
         console.log(response.data);
         setService(response.data.service);
         setLoading(false);
